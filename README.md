@@ -5,19 +5,19 @@ Build a simple Java application for the use case of booking a Show. The program 
 The program would setup available seats per show, allow buyers to select 1 or more available seats and buy/cancel tickets.
 
 The application shall cater to the below 2 types of users & their requirements – (1) Admin and (2) Buyer
-Admin – The users should be able to Setup and view the list of shows and seat allocations.
-Commands to be implemented for Admin :
+**Admin** – The users should be able to Setup and view the list of shows and seat allocations.
+**Commands to be implemented for Admin :**
 
-`Setup  <Show Number> <Number of Rows> <Number of seats per row>  <Cancellation window in minutes>`  
+`Setup <Show Number> <Number of Rows> <Number of seats per row>  <Cancellation window in minutes>`  
 
 (To setup the number of seats per show)
 
-`View <Show Number>  `  
+`View <Show Number>`  
 
-(To display Show Number, Ticket#, Buyer Phone#, Seat Numbers allocated to the buyer)
+(To display Show Number, Ticket#, Buyer Phone#, Seat Numbers allocated to the buyerClient)
 
-Buyer – The users should be able retrieve list of available seats for a show, select 1 or more seats , buy and cancel tickets.
-Commands to be implemented for Buyer :
+**Buyer** – The users should be able retrieve list of available seats for a show, select 1 or more seats , buy and cancel tickets.
+**Commands to be implemented for Buyer :**
 
 `Availability  <Show Number>`   
 
@@ -33,6 +33,6 @@ Commands to be implemented for Buyer :
 
 ## Constraints:
 
-1. Assume max seats per row is 10 and max rows are 26. Example seat number A1,  H5 etc. The “Add” command for admin must ensure rows cannot be added beyond the upper limit of 26.
+1. Assume max seats per row is 10 and max rows are 26. Example seat number A1,  H5 etc. The “Add” command for adminClient must ensure rows cannot be added beyond the upper limit of 26.
 2. After booking, User can cancel the seats within a time window of 2 minutes (configurable).   Cancellation after that is not allowed.
 3. Only one booking per phone# is allowed per show.
