@@ -26,20 +26,27 @@ public class AdminClient implements Client {
                 "Available commands: \n" +
                 "Setup <Show Number> <Number of Rows> <Number of seats per row> <Cancellation window in minutes>\n" +
                 "View <Show Number>\n" +
-                "Exit\n\n" + INPUT_LINE_PREFIX);
+                "Logout\n" +
+                "Exit\n" + INPUT_LINE_PREFIX);
+        
         String cmd = in.readLine();
         while (!"exit".equalsIgnoreCase(cmd)){
             String[] cmdArr = cmd.split(" ");
             switch (cmdArr[0].toLowerCase()) {
-                case "setup":
-                    if (cmdArr.length < 5){
+                case "setup" -> {
+                    if (cmdArr.length < 5) {
                         return 0;
                     }
                     String showNumber = cmdArr[1];
                     int numOfRows = Integer.parseInt(cmdArr[2]);
                     int seatsPerRow = Integer.parseInt(cmdArr[3]);
                     int cancelWindowMins = Integer.parseInt(cmdArr[4]);
-                    Show newShow = AdminClient.setupShow(showNumber, numOfRows, seatsPerRow, cancelWindowMins);
+                    Show newShow = setupShow(showNumber, numOfRows, seatsPerRow, cancelWindowMins);
+                }
+                
+                case "logout" -> {
+                    return 321;
+                }
             }
             out.print(INPUT_LINE_PREFIX);
             cmd = in.readLine();

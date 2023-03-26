@@ -1,9 +1,5 @@
 package org.example.cli.client;
 
-import org.example.cli.client.AdminClient;
-import org.example.cli.client.BuyerClient;
-import org.example.cli.client.Client;
-
 import java.io.InputStream;
 import java.io.PrintStream;
 

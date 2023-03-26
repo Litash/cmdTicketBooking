@@ -23,7 +23,6 @@ import static org.mockito.Mockito.when;
 class CommandLineAppTest {
     private static final String ADMIN_ROLE ="admin";
     private static final String BUYER_ROLE ="buyer";
-    private static final String WRONG_ROLE ="SomethingElse";
 
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();
     private final ByteArrayOutputStream err = new ByteArrayOutputStream();
@@ -76,6 +75,18 @@ class CommandLineAppTest {
                     });
         });
         assertThat(text).isEqualTo("\nSelect your role: \nAdmin\nBuyer\n> \nSelect your role: \nAdmin\nBuyer\n> ");
+    }
+
+    @Test
+    @DisplayName("should exit if selecting exit in role selection")
+    void start_happy_case_4() throws Exception {
+        String[] args = new String[]{};
+        withTextFromSystemIn("exit")
+                .execute(()->{
+                    CommandLineApp testApp = new CommandLineApp(args, mockClientFactory, System.in, System.out, System.err);
+                    int result = testApp.start();
+                    assertThat(result).isZero();
+                });
     }
 
     @Test
