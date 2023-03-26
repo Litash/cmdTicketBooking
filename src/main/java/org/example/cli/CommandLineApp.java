@@ -35,7 +35,7 @@ public class CommandLineApp {
                 return 0;
             }
             return runAsRole(role, in);
-        } catch (Exception e) {  //For real use, catch only the exactly expected types
+        } catch (Exception e) {  //TODO: For real use, catch only the exactly expected types
             return showErrorAndExit(e.getMessage());
         }
     }
