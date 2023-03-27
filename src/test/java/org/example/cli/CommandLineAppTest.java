@@ -74,7 +74,8 @@ class CommandLineAppTest {
                         assertThat(result).isZero();
                     });
         });
-        assertThat(text).isEqualTo("\nSelect your role: \nAdmin\nBuyer\n> \nSelect your role: \nAdmin\nBuyer\n> ");
+        assertThat(text).isEqualTo("\nSelect your role: \nAdmin\nBuyer\n----- Enter 'exit' to close this app -----\n" +
+                "> \nSelect your role: \nAdmin\nBuyer\n----- Enter 'exit' to close this app -----\n> ");
     }
 
     @Test

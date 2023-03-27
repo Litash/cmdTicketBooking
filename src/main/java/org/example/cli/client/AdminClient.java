@@ -3,6 +3,7 @@ package org.example.cli.client;
 import org.example.model.Show;
 
 import java.io.*;
+import java.sql.Connection;
 
 import static org.example.cli.CommandLineApp.INPUT_LINE_PREFIX;
 
@@ -11,7 +12,7 @@ public class AdminClient implements Client {
     private final BufferedReader in;
     private final PrintStream out;
 
-    public AdminClient(InputStream in, PrintStream out) {
+    public AdminClient(Connection dbConnection, InputStream in, PrintStream out) {
         this.in = new BufferedReader(new InputStreamReader(in));;
         this.out = out;
     }
