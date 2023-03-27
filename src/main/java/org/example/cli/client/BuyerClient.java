@@ -1,7 +1,8 @@
 package org.example.cli.client;
 
+import org.example.database.DBAccess;
+
 import java.io.*;
-import java.sql.Connection;
 
 import static org.example.cli.CommandLineApp.INPUT_LINE_PREFIX;
 
@@ -9,7 +10,7 @@ public class BuyerClient implements Client{
     private BufferedReader in;
     private final PrintStream out;
 
-    public BuyerClient(Connection dbConnection, InputStream in, PrintStream out) {
+    public BuyerClient(DBAccess dbConnection, InputStream in, PrintStream out) {
         this.in = new BufferedReader(new InputStreamReader(in));;
         this.out = new PrintStream(out);
     }
