@@ -34,8 +34,8 @@ public class CommandLineApp {
             if ("exit".equalsIgnoreCase(role)) {
                 return 0;
             }
-            return runAsRole(role, in);
-        } catch (Exception e) {  //TODO: For real use, catch only the exactly expected types
+            return runAsRole(role, in); // todo: handle returnCode
+        } catch (Exception e) {  //TODO: catch only the exactly expected types
             return showErrorAndExit(e.getMessage());
         }
     }

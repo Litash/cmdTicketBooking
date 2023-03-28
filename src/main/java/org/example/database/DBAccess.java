@@ -36,6 +36,7 @@ public class DBAccess {
 
             statement = conn.createStatement();
             statement.execute(sql);
+            System.out.println("Database initialized.");
         } catch (SQLException e) {
             System.err.println("Cannot read schema.sql");
             throw new RuntimeException(e);

@@ -28,12 +28,58 @@ class AdminClientTest {
     }
 
     @Test
-    void shouldSetupShow() throws Exception {
+    @DisplayName("should setup show properly")
+    void setup_happy_case() throws Exception {
         withTextFromSystemIn("setup test01 3 3 5", "exit")
                 .execute(() -> {
                     AdminClient testClient = new AdminClient(testDB, System.in, System.out);
                     int returnCode = testClient.run();
-                    assertThat(returnCode).isZero();
+                    assertThat(returnCode).isEqualTo(200);
+                });
+    }
+
+    @Test
+    @DisplayName("should handle command with missing parameters")
+    void setup_sad_case() throws Exception {
+        withTextFromSystemIn("setup test01 3 3", "exit")
+                .execute(() -> {
+                    AdminClient testClient = new AdminClient(testDB, System.in, System.out);
+                    int returnCode = testClient.run();
+                    assertThat(returnCode).isEqualTo(400);
+                });
+    }
+
+    @Test
+    @DisplayName("should be able to view the show after setup")
+    void view_happy_case() throws Exception {
+        withTextFromSystemIn("setup test01 3 3 5", "view test01", "exit")
+                .execute(() -> {
+                    AdminClient testClient = new AdminClient(testDB, System.in, System.out);
+                    int returnCode = testClient.run();
+                    assertThat(returnCode).isEqualTo(200);
+                });
+    }
+
+    @Test
+    @DisplayName("should return 404 when show not found")
+    void view_sad_case() throws Exception {
+        withTextFromSystemIn("view fakeShow", "exit")
+                .execute(() -> {
+                    AdminClient testClient = new AdminClient(testDB, System.in, System.out);
+                    int returnCode = testClient.run();
+                    assertThat(returnCode).isEqualTo(404);
+                });
+    }
+
+    @Test
+    @DisplayName("should handle unsupported command")
+    void run_sad_case() throws Exception {
+
+        withTextFromSystemIn("alice wonderland", "exit")
+                .execute(() -> {
+                    AdminClient testClient = new AdminClient(testDB, System.in, System.out);
+                    int returnCode = testClient.run();
+                    assertThat(returnCode).isEqualTo(405);
                 });
     }
 
@@ -47,4 +93,6 @@ class AdminClientTest {
                     assertThat(result).isEqualTo(321);
                 });
     }
+    
+    
 }

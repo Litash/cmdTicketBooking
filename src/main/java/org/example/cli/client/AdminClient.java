@@ -4,6 +4,7 @@ import org.example.database.DBAccess;
 import org.example.model.Show;
 
 import java.io.*;
+import java.util.List;
 
 import static org.example.cli.CommandLineApp.INPUT_LINE_PREFIX;
 
@@ -13,6 +14,8 @@ public class AdminClient implements Client {
     private final PrintStream out;
     private final DBAccess dbAccess;
 
+    private static List<String> AVAILABLE_COMMANDS = List.of("setup", "view", "logout", "exit");
+
     public AdminClient(DBAccess dbAccess, InputStream in, PrintStream out) {
         this.in = new BufferedReader(new InputStreamReader(in));;
         this.out = out;
@@ -21,6 +24,7 @@ public class AdminClient implements Client {
 
     @Override
     public int run() throws IOException {
+        int returnCode = 0;
         out.print("\n\n====== You are an Admin. ======\n" +
                 "Available commands: \n" +
                 "Setup <Show Number> <Number of Rows> <Number of seats per row> <Cancellation window in minutes>\n" +
@@ -34,31 +38,47 @@ public class AdminClient implements Client {
             String[] cmdArr = cmd.split(" ");
             if ("setup".equalsIgnoreCase(cmdArr[0])) {
                 int result = setupShow(cmdArr);
-                if (result == 1) out.println("\nA new show has been setup successfully");
+                if (result == 1) {
+                    out.println("\nA new show has been setup successfully");
+                    returnCode = 200;
+                } else {
+                    returnCode = 400;
+                }
             }
 
             if ("view".equalsIgnoreCase(cmdArr[0])) {
-                getShow(cmdArr[1]);
+                returnCode = getShow(cmdArr[1]);
             }
 
             if ("logout".equalsIgnoreCase(cmdArr[0])) {
                 return 321;
             }
 
+            if (!AVAILABLE_COMMANDS.contains(cmdArr[0].toLowerCase())) {
+                out.println("Command is not supported.");
+                returnCode = 405;
+            }
+
             out.print(INPUT_LINE_PREFIX);
             cmd = in.readLine();
         }
-
-        return 0;
+        
+        return returnCode;
     }
 
-    private void getShow(String showNumber) {
+    private int getShow(String showNumber) {
         Show show = dbAccess.getShow(showNumber);
-        out.println("Show Number = " + show.getShowNumber() 
-                + "\nNumber of Rows = " + show.getNumberOfRows() 
-                + "\nNumber of seats per row = " + show.getNumberOfSeatsPerRow() 
-                + "\nCancellation window in minutes = " + show.getCancellationWindowMins() 
-                + "\nAvailable seats = " + show.getAvailableSeats());
+        if (show == null) {
+            out.println("Show not found.");
+            return 404;
+        } else {
+            out.println("Show Number = " + show.getShowNumber()
+                    + "\nNumber of Rows = " + show.getNumberOfRows()
+                    + "\nNumber of seats per row = " + show.getNumberOfSeatsPerRow()
+                    + "\nCancellation window in minutes = " + show.getCancellationWindowMins()
+                    + "\nAvailable seats = " + show.getAvailableSeats());
+            return 200;
+        }
     }
 
     private int setupShow(String[] cmdArr) {
