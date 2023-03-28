@@ -34,7 +34,7 @@ public class AdminClient implements Client {
             String[] cmdArr = cmd.split(" ");
             if ("setup".equalsIgnoreCase(cmdArr[0])) {
                 int result = setupShow(cmdArr);
-                if (result == 1) out.println("A new show has been setup successfully");
+                if (result == 1) out.println("\nA new show has been setup successfully");
             }
 
             if ("view".equalsIgnoreCase(cmdArr[0])) {

@@ -8,6 +8,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
+import java.io.InputStream;
+import java.io.PrintStream;
+
+import static com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemOutNormalized;
 import static com.github.stefanbirkner.systemlambda.SystemLambda.withTextFromSystemIn;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -25,13 +29,12 @@ class AdminClientTest {
 
     @Test
     void shouldSetupShow() throws Exception {
-        withTextFromSystemIn("setup test01 3 3 5")
+        withTextFromSystemIn("setup test01 3 3 5", "exit")
                 .execute(() -> {
                     AdminClient testClient = new AdminClient(testDB, System.in, System.out);
-                    int result = testClient.run();
-                    assertThat(result).isZero();
+                    int returnCode = testClient.run();
+                    assertThat(returnCode).isZero();
                 });
-        
     }
 
     @Test
