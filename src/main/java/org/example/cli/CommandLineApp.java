@@ -67,8 +67,7 @@ public class CommandLineApp {
     }
 
     private int showErrorAndExit(String errorMessage) {
-        err.println("Ticket Booking Client: " + errorMessage);
-        err.println("Refer to help page using '--help'");
+        err.println("There is an error: " + errorMessage);
         return 1;
     }
 }
