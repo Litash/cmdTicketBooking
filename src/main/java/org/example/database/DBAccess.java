@@ -6,6 +6,10 @@ import org.example.model.Show;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.*;
 
 public class DBAccess {
@@ -30,10 +34,8 @@ public class DBAccess {
             conn = DriverManager.getConnection(jdbcUrl, username, password);
             System.out.println("Connected to H2 database.");
             // init db
-            ClassLoader classLoader = Main.class.getClassLoader();
-            File file = new File(classLoader.getResource("schema.sql").getFile());
-            String sql = FileUtils.readFileToString(file, "UTF-8");
-
+            Path path = Path.of("src/main/resources/schema.sql");
+            String sql = Files.readAllLines(path).get(0);
             statement = conn.createStatement();
             statement.execute(sql);
             System.out.println("Database initialized.");
