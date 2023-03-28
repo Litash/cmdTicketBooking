@@ -23,4 +23,10 @@ class ClientFactoryTest {
         assertThat(factory.getClient("admin", System.in, System.out)).isInstanceOf(AdminClient.class);
         assertThat(factory.getClient("buyer", System.in, System.out)).isInstanceOf(BuyerClient.class);
     }
+
+    @Test
+    void getClient_null() {
+        ClientFactory factory = new ClientFactory(testDB);
+        assertThat(factory.getClient("foo", System.in, System.out)).isNull();
+    }
 }
