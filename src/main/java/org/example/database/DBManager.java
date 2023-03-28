@@ -2,6 +2,8 @@ package org.example.database;
 
 import org.apache.commons.io.IOUtils;
 import org.example.model.Show;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -16,6 +18,8 @@ public class DBManager {
     private Statement statement;
     private ResultSet resultSet;
 
+    Logger logger = LoggerFactory.getLogger(DBManager.class);
+    
     public DBManager(String jdbcUrl, String username, String password) {
         this.jdbcUrl = jdbcUrl;
         this.username = username;
@@ -34,7 +38,7 @@ public class DBManager {
             statement.execute(sql);
             System.out.println("Database initialized.");
         } catch (SQLException e) {
-            System.err.println("Cannot read schema.sql");
+            logger.error("Cannot read schema.sql");
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -57,21 +61,27 @@ public class DBManager {
             
             return new Show(showNum, rows, seatsPerRow, cancellationWindow, availableSeats);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            logger.error(e.getMessage());//todo: add logger
         }
         return null;
     }
 
     public int saveShow(Show show) throws SQLException {
-        PreparedStatement preparedStatement = conn.prepareStatement(
+        PreparedStatement preparedStatement = null;
+        try {
+            preparedStatement = conn.prepareStatement(
                 "insert into SHOW values (?, ?, ?, ?, ?)"
         );
-        preparedStatement.setString(1, show.getShowNumber());
-        preparedStatement.setInt(2, show.getNumberOfRows());
-        preparedStatement.setInt(3, show.getNumberOfSeatsPerRow());
-        preparedStatement.setInt(4, show.getCancellationWindowMins());
-        preparedStatement.setString(5, String.join(",", show.getAvailableSeats()));
-        return preparedStatement.executeUpdate();
+            preparedStatement.setString(1, show.getShowNumber());
+            preparedStatement.setInt(2, show.getNumberOfRows());
+            preparedStatement.setInt(3, show.getNumberOfSeatsPerRow());
+            preparedStatement.setInt(4, show.getCancellationWindowMins());
+            preparedStatement.setString(5, String.join(",", show.getAvailableSeats()));
+            return preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            logger.error(e.getLocalizedMessage()); //todo: add logger
+            throw e;
+        }
     }
     public void close() {
         try {

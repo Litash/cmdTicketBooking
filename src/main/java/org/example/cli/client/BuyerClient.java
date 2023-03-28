@@ -2,6 +2,7 @@ package org.example.cli.client;
 
 
 import org.example.database.DBManager;
+import org.example.model.Show;
 
 import java.io.*;
 import java.util.List;
@@ -15,9 +16,12 @@ public class BuyerClient implements Client{
     private BufferedReader in;
     private final PrintStream out;
 
-    public BuyerClient(DBManager dbConnection, InputStream in, PrintStream out) {
+    private DBManager dbManager;
+
+    public BuyerClient(DBManager dbManager, InputStream in, PrintStream out) {
         this.in = new BufferedReader(new InputStreamReader(in));;
         this.out = new PrintStream(out);
+        this.dbManager = dbManager;
     }
 
     @Override
@@ -35,10 +39,10 @@ public class BuyerClient implements Client{
             String[] cmdArr = cmd.split(" ");
 
             if ("availability".equalsIgnoreCase(cmdArr[0])) {
-                int paramStatus = checkParameters(cmdArr, 5, out);
+                int paramStatus = checkParameters(cmdArr, 2, out);
                 if (paramStatus != 200) return paramStatus;
                 
-                return showAvailability(cmdArr[1]);
+                returnCode = showAvailability(cmdArr[1]);
             }
 
             if ("logout".equalsIgnoreCase(cmdArr[0])) {
@@ -58,6 +62,12 @@ public class BuyerClient implements Client{
     }
 
     private int showAvailability(String showNumber) {
-        return 0;
+        Show show = dbManager.getShow(showNumber);
+        if (show != null) {
+            out.println("Show number: " + show.getShowNumber());
+            out.println("Available seats: " + show.getAvailableSeats());
+            return 200;
+        }
+        return 404;
     }
 }
