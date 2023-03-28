@@ -1,6 +1,6 @@
 package org.example.cli.client;
 
-import org.example.database.DBAccess;
+import org.example.database.DBManager;
 import org.example.model.Show;
 
 import java.io.*;
@@ -12,14 +12,14 @@ public class AdminClient implements Client {
 
     private final BufferedReader in;
     private final PrintStream out;
-    private final DBAccess dbAccess;
+    private final DBManager dbManager;
 
     private static List<String> AVAILABLE_COMMANDS = List.of("setup", "view", "logout", "exit");
 
-    public AdminClient(DBAccess dbAccess, InputStream in, PrintStream out) {
+    public AdminClient(DBManager dbManager, InputStream in, PrintStream out) {
         this.in = new BufferedReader(new InputStreamReader(in));;
         this.out = out;
-        this.dbAccess = dbAccess;
+        this.dbManager = dbManager;
     }
 
     @Override
@@ -67,7 +67,7 @@ public class AdminClient implements Client {
     }
 
     private int getShow(String showNumber) {
-        Show show = dbAccess.getShow(showNumber);
+        Show show = dbManager.getShow(showNumber);
         if (show == null) {
             out.println("Show not found.");
             return 404;
@@ -91,6 +91,6 @@ public class AdminClient implements Client {
         int seatsPerRow = Integer.parseInt(cmdArr[3]);
         int cancelWindow = Integer.parseInt(cmdArr[4]);
         Show newShow = new Show(showNumber, numOfRows, seatsPerRow, cancelWindow);
-        return dbAccess.saveShow(newShow);
+        return dbManager.saveShow(newShow);
     }
 }

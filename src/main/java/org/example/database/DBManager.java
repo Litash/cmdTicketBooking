@@ -1,28 +1,22 @@
 package org.example.database;
 
-import org.apache.commons.io.FileUtils;
-import org.example.Main;
+import org.apache.commons.io.IOUtils;
 import org.example.model.Show;
 
-import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.*;
 
-public class DBAccess {
+public class DBManager {
     private final String jdbcUrl;
     private final String username;
     private final String password;
     
     private Connection conn;
     private Statement statement;
-    private PreparedStatement preparedStatement;
     private ResultSet resultSet;
 
-    public DBAccess(String jdbcUrl, String username, String password) {
+    public DBManager(String jdbcUrl, String username, String password) {
         this.jdbcUrl = jdbcUrl;
         this.username = username;
         this.password = password;
@@ -34,8 +28,8 @@ public class DBAccess {
             conn = DriverManager.getConnection(jdbcUrl, username, password);
             System.out.println("Connected to H2 database.");
             // init db
-            Path path = Path.of("src/main/resources/schema.sql");
-            String sql = Files.readAllLines(path).get(0);
+            FileInputStream fis = new FileInputStream("src/main/resources/schema.sql");
+            String sql = IOUtils.toString(fis, "UTF-8");
             statement = conn.createStatement();
             statement.execute(sql);
             System.out.println("Database initialized.");
@@ -70,7 +64,7 @@ public class DBAccess {
 
     public int saveShow(Show show) {
         try {
-            preparedStatement = conn.prepareStatement(
+            PreparedStatement preparedStatement = conn.prepareStatement(
                     "insert into SHOW values (?, ?, ?, ?, ?)"
             );
             preparedStatement.setString(1, show.getShowNumber());

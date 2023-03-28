@@ -1,25 +1,25 @@
 package org.example.cli.client;
 
-import org.example.database.DBAccess;
+import org.example.database.DBManager;
 
 import java.io.InputStream;
 import java.io.PrintStream;
 
 public class ClientFactory {
 
-    private final DBAccess dbAccess;
+    private final DBManager dbManager;
 
-    public ClientFactory(DBAccess dbAccess) {
-        this.dbAccess = dbAccess;
+    public ClientFactory(DBManager dbManager) {
+        this.dbManager = dbManager;
     }
 
     public Client getClient(String role, InputStream in, PrintStream out) {
         if ("admin".equalsIgnoreCase(role)) {
-            return new AdminClient(dbAccess, in, out);
+            return new AdminClient(dbManager, in, out);
         } 
         
         if ("buyer".equalsIgnoreCase(role)) {
-            return new BuyerClient(dbAccess, in, out);
+            return new BuyerClient(dbManager, in, out);
         } 
         
         return null;

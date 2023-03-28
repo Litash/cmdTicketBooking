@@ -1,6 +1,6 @@
 package org.example.cli.client;
 
-import org.example.database.DBAccess;
+import org.example.database.DBManager;
 import org.example.database.DBTestUtil;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -9,11 +9,11 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ClientFactoryTest {
-    private static DBAccess testDB;
+    private static DBManager testDB;
 
     @BeforeAll
     static void beforeAll() {
-        testDB = new DBAccess(DBTestUtil.testJdbcUrl, DBTestUtil.username, DBTestUtil.password);
+        testDB = new DBManager(DBTestUtil.testJdbcUrl, DBTestUtil.username, DBTestUtil.password);
     }
 
     @Test

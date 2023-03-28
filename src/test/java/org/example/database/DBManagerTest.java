@@ -4,15 +4,14 @@ import org.example.model.Show;
 import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class DBAccessTest {
-    static DBAccess testDB;
+class DBManagerTest {
+    static DBManager testDB;
     
     @BeforeAll
     static void setUp() {
-        testDB = new DBAccess(DBTestUtil.testJdbcUrl, DBTestUtil.username, DBTestUtil.password);
+        testDB = new DBManager(DBTestUtil.testJdbcUrl, DBTestUtil.username, DBTestUtil.password);
         testDB.initDatabase();
     }
     

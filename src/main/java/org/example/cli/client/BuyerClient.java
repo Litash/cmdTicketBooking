@@ -1,6 +1,6 @@
 package org.example.cli.client;
 
-import org.example.database.DBAccess;
+import org.example.database.DBManager;
 
 import java.io.*;
 
@@ -10,7 +10,7 @@ public class BuyerClient implements Client{
     private BufferedReader in;
     private final PrintStream out;
 
-    public BuyerClient(DBAccess dbConnection, InputStream in, PrintStream out) {
+    public BuyerClient(DBManager dbConnection, InputStream in, PrintStream out) {
         this.in = new BufferedReader(new InputStreamReader(in));;
         this.out = new PrintStream(out);
     }

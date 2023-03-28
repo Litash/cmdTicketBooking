@@ -100,7 +100,7 @@ class CommandLineAppTest {
             int result = testApp.start();
             assertThat(result).isOne();
         });
-        assertThat(text).isEqualTo("Ticket Booking Client: error message\nRefer to help page using '--help'\n");
+        assertThat(text).isEqualTo("There is an error: error message\nRefer to help page using '--help'\n");
     }
 
     private void mockAdminClient() throws IOException {

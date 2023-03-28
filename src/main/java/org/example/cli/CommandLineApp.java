@@ -68,6 +68,7 @@ public class CommandLineApp {
 
     private int showErrorAndExit(String errorMessage) {
         err.println("There is an error: " + errorMessage);
+        err.println("Refer to help page using '--help'"); //todo: add help option
         return 1;
     }
 }

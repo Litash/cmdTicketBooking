@@ -2,7 +2,7 @@ package org.example;
 
 import org.example.cli.CommandLineApp;
 import org.example.cli.client.ClientFactory;
-import org.example.database.DBAccess;
+import org.example.database.DBManager;
 
 public class Main {
     public static void main(String[] args) {
@@ -11,17 +11,17 @@ public class Main {
         String username = "sa";
         String password = "sa";
 
-        DBAccess dbAccess = new DBAccess(jdbcUrl, username, password);
-        dbAccess.initDatabase();
+        DBManager dbManager = new DBManager(jdbcUrl, username, password);
+        dbManager.initDatabase();
         
         // start app
-        ClientFactory clientFactory = new ClientFactory(dbAccess);
+        ClientFactory clientFactory = new ClientFactory(dbManager);
         int result = new CommandLineApp(args, clientFactory, System.in, System.out, System.err).start();
         while (result == 321) {
             // change role
             result = new CommandLineApp(args, clientFactory, System.in, System.out, System.err).start();
         }
 
-        dbAccess.close();
+        dbManager.close();
     }
 }

@@ -1,29 +1,21 @@
 package org.example.cli.client;
 
-import org.example.database.DBAccess;
+import org.example.database.DBManager;
 import org.example.database.DBTestUtil;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 
-import java.io.InputStream;
-import java.io.PrintStream;
-
-import static com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemOutNormalized;
 import static com.github.stefanbirkner.systemlambda.SystemLambda.withTextFromSystemIn;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 class AdminClientTest {
 
-    static DBAccess testDB;
+    static DBManager testDB;
 
     @BeforeAll
     static void setUp() {
-        testDB = new DBAccess(DBTestUtil.testJdbcUrl, DBTestUtil.username, DBTestUtil.password);
+        testDB = new DBManager(DBTestUtil.testJdbcUrl, DBTestUtil.username, DBTestUtil.password);
         testDB.initDatabase();
     }
 
