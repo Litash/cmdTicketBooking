@@ -36,3 +36,6 @@ The application shall cater to the below 2 types of users & their requirements �
 1. Assume max seats per row is 10 and max rows are 26. Example seat number A1,  H5 etc. The “Add” command for adminClient must ensure rows cannot be added beyond the upper limit of 26.
 2. After booking, User can cancel the seats within a time window of 2 minutes (configurable).   Cancellation after that is not allowed.
 3. Only one booking per phone# is allowed per show.
+
+# Assumption
+1. Since there is no requirement about setup duplicate show. Assuming a show can be setup only once, once setup, it cannot be changed.

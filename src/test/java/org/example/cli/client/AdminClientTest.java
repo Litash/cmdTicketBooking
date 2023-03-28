@@ -22,7 +22,7 @@ class AdminClientTest {
     @Test
     @DisplayName("should setup show properly")
     void setup_happy_case() throws Exception {
-        withTextFromSystemIn("setup test01 3 3 5", "exit")
+        withTextFromSystemIn("setup test00 3 3 5", "exit")
                 .execute(() -> {
                     AdminClient testClient = new AdminClient(testDB, System.in, System.out);
                     int returnCode = testClient.run();
@@ -42,9 +42,20 @@ class AdminClientTest {
     }
 
     @Test
+    @DisplayName("should handle duplicate show setup")
+    void setup_sad_case_1() throws Exception {
+        withTextFromSystemIn("setup test02 3 3 5", "setup test02 3 3 5", "exit")
+                .execute(() -> {
+                    AdminClient testClient = new AdminClient(testDB, System.in, System.out);
+                    int returnCode = testClient.run();
+                    assertThat(returnCode).isEqualTo(403);
+                });
+    }
+
+    @Test
     @DisplayName("should be able to view the show after setup")
     void view_happy_case() throws Exception {
-        withTextFromSystemIn("setup test01 3 3 5", "view test01", "exit")
+        withTextFromSystemIn("setup test03 3 3 5", "view test02", "exit")
                 .execute(() -> {
                     AdminClient testClient = new AdminClient(testDB, System.in, System.out);
                     int returnCode = testClient.run();

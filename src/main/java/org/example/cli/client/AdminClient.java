@@ -4,9 +4,11 @@ import org.example.database.DBManager;
 import org.example.model.Show;
 
 import java.io.*;
+import java.sql.SQLException;
 import java.util.List;
 
 import static org.example.cli.CommandLineApp.INPUT_LINE_PREFIX;
+import static org.example.cli.client.ClientUtils.checkParameters;
 
 public class AdminClient implements Client {
 
@@ -33,20 +35,18 @@ public class AdminClient implements Client {
                 "Exit\n" + INPUT_LINE_PREFIX);
         
         String cmd = in.readLine();
-        boolean isLoop = true;
-        while (!"exit".equalsIgnoreCase(cmd) && isLoop) {
+        while (!"exit".equalsIgnoreCase(cmd)) {
             String[] cmdArr = cmd.split(" ");
             if ("setup".equalsIgnoreCase(cmdArr[0])) {
-                int result = setupShow(cmdArr);
-                if (result == 1) {
-                    out.println("\nA new show has been setup successfully");
-                    returnCode = 200;
-                } else {
-                    returnCode = 400;
-                }
+                int paramStatus = checkParameters(cmdArr, 5, out);
+                if (paramStatus != 200) return paramStatus;
+                returnCode = setupShow(cmdArr);
             }
 
             if ("view".equalsIgnoreCase(cmdArr[0])) {
+                int paramStatus = checkParameters(cmdArr, 2, out);
+                if (paramStatus != 200) return paramStatus;
+                
                 returnCode = getShow(cmdArr[1]);
             }
 
@@ -82,15 +82,25 @@ public class AdminClient implements Client {
     }
 
     private int setupShow(String[] cmdArr) {
-        if (cmdArr.length < 5) {
-            out.println("Missing parameters, please try again.");
-            return 0;
-        }
+        //todo: validation
         String showNumber = cmdArr[1];
         int numOfRows = Integer.parseInt(cmdArr[2]);
         int seatsPerRow = Integer.parseInt(cmdArr[3]);
         int cancelWindow = Integer.parseInt(cmdArr[4]);
         Show newShow = new Show(showNumber, numOfRows, seatsPerRow, cancelWindow);
-        return dbManager.saveShow(newShow);
+        int result = 0;
+        try {
+            result = dbManager.saveShow(newShow);
+        } catch (SQLException e) {
+            out.println("\nA show with same number has already been setup"); //todo: update?
+            return 403;
+        }
+
+        if (result == 1) {
+            out.println("\nA new show has been setup successfully");
+            return 200;
+        } else {
+            return 500;
+        }
     }
 }

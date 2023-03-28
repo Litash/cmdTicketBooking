@@ -3,6 +3,8 @@ package org.example.database;
 import org.example.model.Show;
 import org.junit.jupiter.api.*;
 
+import java.sql.SQLException;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -18,7 +20,7 @@ class DBManagerTest {
     @Order(1)
     @Test
     @DisplayName("save show and verify")
-    void saveShow() {
+    void saveShow() throws SQLException {
         Show show = new Show("test1", 3, 3, 5);
         testDB.saveShow(show);
 

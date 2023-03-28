@@ -62,21 +62,16 @@ public class DBManager {
         return null;
     }
 
-    public int saveShow(Show show) {
-        try {
-            PreparedStatement preparedStatement = conn.prepareStatement(
-                    "insert into SHOW values (?, ?, ?, ?, ?)"
-            );
-            preparedStatement.setString(1, show.getShowNumber());
-            preparedStatement.setInt(2, show.getNumberOfRows());
-            preparedStatement.setInt(3, show.getNumberOfSeatsPerRow());
-            preparedStatement.setInt(4, show.getCancellationWindowMins());
-            preparedStatement.setString(5, String.join(",", show.getAvailableSeats()));
-            return preparedStatement.executeUpdate();
-        } catch (Exception e) {
-            System.out.println(e.getLocalizedMessage());
-        }
-        return 0;
+    public int saveShow(Show show) throws SQLException {
+        PreparedStatement preparedStatement = conn.prepareStatement(
+                "insert into SHOW values (?, ?, ?, ?, ?)"
+        );
+        preparedStatement.setString(1, show.getShowNumber());
+        preparedStatement.setInt(2, show.getNumberOfRows());
+        preparedStatement.setInt(3, show.getNumberOfSeatsPerRow());
+        preparedStatement.setInt(4, show.getCancellationWindowMins());
+        preparedStatement.setString(5, String.join(",", show.getAvailableSeats()));
+        return preparedStatement.executeUpdate();
     }
     public void close() {
         try {
