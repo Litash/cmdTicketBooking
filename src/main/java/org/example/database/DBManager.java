@@ -32,7 +32,7 @@ public class DBManager {
             conn = DriverManager.getConnection(jdbcUrl, username, password);
             System.out.println("Connected to H2 database.");
             // init db
-            FileInputStream fis = new FileInputStream("src/main/resources/schema.sql");
+            FileInputStream fis = new FileInputStream("src/main/resources/schema.sql");//todo: change path
             String sql = IOUtils.toString(fis, "UTF-8");
             statement = conn.createStatement();
             statement.execute(sql);
