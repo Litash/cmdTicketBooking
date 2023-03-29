@@ -1,6 +1,5 @@
 package org.example.database;
 
-import org.apache.commons.io.IOUtils;
 import org.example.exception.FileLoadException;
 import org.example.exception.MyDBException;
 import org.example.model.Booking;
@@ -8,8 +7,9 @@ import org.example.model.Show;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.List;
 
@@ -33,16 +33,20 @@ public class DBManager {
     }
 
     public void initDatabase() throws MyDBException, FileLoadException {
-        
-        try {
+
+        ClassLoader classLoader = getClass().getClassLoader();
+        try (InputStream in = classLoader.getResourceAsStream("schema.sql")){
             conn = DriverManager.getConnection(jdbcUrl, username, password);
             System.out.println("Connected to H2 database.");
             // init db
-            FileInputStream fis = new FileInputStream("src/main/resources/schema.sql");//todo: change path
-            String sql = IOUtils.toString(fis, "UTF-8");
-            statement = conn.createStatement();
-            statement.execute(sql);
-            System.out.println("Database initialized.");
+            if (in != null) {
+                String sql = new String(in.readAllBytes(), StandardCharsets.UTF_8);
+                statement = conn.createStatement();
+                statement.execute(sql);
+                System.out.println("Database initialized.");
+            } else {
+                logger.error("schema.sql is empty. Cannot initialize database.");
+            }
         } catch (SQLException e) {
             logger.error("Cannot create db");
             throw new MyDBException("Cannot create db", e);
