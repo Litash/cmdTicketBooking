@@ -25,11 +25,7 @@ public class Show {
         this.numberOfRows = numberOfRows;
         this.numberOfSeatsPerRow = numberOfSeatsPerRow;
         this.cancellationWindowMins = cancellationWindowMins;
-        this.availableSeats = convertSeatsToList(availableSeats);
-    }
-
-    private List<String> convertSeatsToList(String availableSeats) {
-        return Arrays.stream(availableSeats.split(",")).collect(Collectors.toList());
+        this.availableSeats = Arrays.stream(availableSeats.split(",")).collect(Collectors.toList());
     }
 
     public List<String> calculateAvailableSeats(int numberOfRows, int numberOfSeatsPerRow) {

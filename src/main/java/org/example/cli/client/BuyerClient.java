@@ -9,6 +9,7 @@ import org.example.model.Show;
 import java.io.*;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -79,7 +80,23 @@ public class BuyerClient implements Client{
     }
 
     private int cancelTicket(String[] cmdArr) {
-        return 0;
+        String ticketID = cmdArr[1];
+        int phone = Integer.valueOf(cmdArr[2]);
+        Booking booking = dbManager.getBookingByShowAndPhone(ticketID);
+        Show show = dbManager.getShow(booking.getShowNumber());
+        
+        Timestamp bookingTime = booking.getBookingTime();
+        int cancelWindow = show.getCancellationWindowMins();
+        Instant bookingInstant = bookingTime.toInstant();
+        Instant windowCloseTime = bookingInstant.plus(cancelWindow, ChronoUnit.MINUTES);
+        if (windowCloseTime.isAfter(Instant.now())) {
+            dbManager.deleteBooking(booking);
+            return 200;
+        } else {
+            out.println("Sorry, cancellation window for show "+ show.getShowNumber() +" has closed at " + Timestamp.from(windowCloseTime) +
+                    ", you cannot cancel your booking.");
+        }
+        return 400;
     }
 
     private int bookShowTicket(String[] cmdArr) {
@@ -87,7 +104,7 @@ public class BuyerClient implements Client{
         Integer phone = Integer.parseInt(cmdArr[2]); //todo: validation
         List<String> seats = Arrays.stream(cmdArr[3].split(",")).map(String::toUpperCase).collect(Collectors.toList()); 
         String ticketID = UUID.randomUUID().toString();
-        Timestamp ts = Timestamp.from(Instant.now());
+        Timestamp ts = Timestamp.from(Instant.now()); //todo: check
         Booking booking = new Booking(ticketID, phone, showNumber, seats, ts);
         try {
             int bookingResult = dbManager.saveBooking(booking);

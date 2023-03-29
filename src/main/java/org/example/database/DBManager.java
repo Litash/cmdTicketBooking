@@ -141,4 +141,33 @@ public class DBManager {
             logger.error(e.getMessage());
         }
     }
+
+    public Booking getBookingByShowAndPhone(String ticketId) {
+        try {
+            resultSet = statement
+                    .executeQuery("select * from BOOKING where TICKET_ID= '" + ticketId + "' LIMIT 1;");
+            resultSet.first();
+            int phone = resultSet.getInt("PHONE");
+            String showNumber = resultSet.getString("SHOW_NO");
+            String seats = resultSet.getString("BOOKED_SEATS");
+            Timestamp bookingTime = resultSet.getTimestamp("BOOKING_TIME");
+            return new Booking(ticketId, phone, showNumber, seats, bookingTime);
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+        }
+        return null;
+    }
+
+    public int deleteBooking(Booking booking) {
+        String ticketID = booking.getTicketID();
+        try {
+            preparedStatement = conn.prepareStatement("delete from BOOKING where TICKET_ID= ?;");
+            preparedStatement.setString(1, ticketID);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+        }
+        return 0;
+    }
 }
