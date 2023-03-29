@@ -15,6 +15,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.example.cli.CommandLineApp.INPUT_LINE_PREFIX;
+import static org.example.cli.client.ClientUtils.checkAvailableCommands;
 import static org.example.cli.client.ClientUtils.checkParameters;
 
 
@@ -59,15 +60,17 @@ public class BuyerClient implements Client{
                 returnCode = bookShowTicket(cmdArr);
             }
 
+            if ("cancel".equalsIgnoreCase(cmdArr[0])) {
+                int paramStatus = checkParameters(cmdArr, 3, out);
+                if (paramStatus != 200) return paramStatus;
+
+                returnCode = cancelTicket(cmdArr);
+            }
+
             if ("logout".equalsIgnoreCase(cmdArr[0])) {
                 return 321;
             }
-
-            if (!AVAILABLE_COMMANDS.contains(cmdArr[0].toLowerCase())) {
-                out.println("Command is not supported.");
-                returnCode = 405;
-            }
-
+            returnCode = checkAvailableCommands(returnCode, cmdArr, AVAILABLE_COMMANDS, out);
             out.print(INPUT_LINE_PREFIX);
             cmd = in.readLine();
         }
@@ -75,10 +78,14 @@ public class BuyerClient implements Client{
         return returnCode;
     }
 
+    private int cancelTicket(String[] cmdArr) {
+        return 0;
+    }
+
     private int bookShowTicket(String[] cmdArr) {
         String showNumber = cmdArr[1];
         Integer phone = Integer.parseInt(cmdArr[2]); //todo: validation
-        List<String> seats = Arrays.stream(cmdArr[3].split(",")).collect(Collectors.toList());//todo:validation
+        List<String> seats = Arrays.stream(cmdArr[3].split(",")).map(String::toUpperCase).collect(Collectors.toList()); 
         String ticketID = UUID.randomUUID().toString();
         Timestamp ts = Timestamp.from(Instant.now());
         Booking booking = new Booking(ticketID, phone, showNumber, seats, ts);

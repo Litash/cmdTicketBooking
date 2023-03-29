@@ -7,6 +7,7 @@ import java.io.*;
 import java.util.List;
 
 import static org.example.cli.CommandLineApp.INPUT_LINE_PREFIX;
+import static org.example.cli.client.ClientUtils.checkAvailableCommands;
 import static org.example.cli.client.ClientUtils.checkParameters;
 
 public class AdminClient implements Client {
@@ -52,12 +53,7 @@ public class AdminClient implements Client {
             if ("logout".equalsIgnoreCase(cmdArr[0])) {
                 return 321;
             }
-
-            if (!AVAILABLE_COMMANDS.contains(cmdArr[0].toLowerCase())) {
-                out.println("Command is not supported.");
-                returnCode = 405;
-            }
-
+            returnCode = checkAvailableCommands(returnCode, cmdArr, AVAILABLE_COMMANDS, out);
             out.print(INPUT_LINE_PREFIX);
             cmd = in.readLine();
         }
