@@ -34,6 +34,19 @@ class BuyerClientTest {
     }
 
     @Test
+    void book_happy_case() throws Exception {
+        Show testShow = new Show("test2", 3, 3, 5);
+        testDB.saveShow(testShow);
+
+        withTextFromSystemIn("book test2 12341234 A1,B2,C3", "exit")
+                .execute(() -> {
+                    BuyerClient testClient = new BuyerClient(testDB, System.in, System.out);
+                    int returnCode = testClient.run();
+                    assertThat(returnCode).isEqualTo(200);
+                });
+    }
+
+    @Test
     @DisplayName("should handle missing parameters")
     void run_sad_case_1() throws Exception {
         withTextFromSystemIn("availability", "exit")

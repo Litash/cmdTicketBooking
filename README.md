@@ -38,4 +38,6 @@ The application shall cater to the below 2 types of users & their requirements â
 3. Only one booking per phone# is allowed per show.
 
 # Assumption
-1. Since there is no requirement about setup duplicate show. Assuming a show can be setup only once, once setup, it cannot be changed.
+- Assuming show number is unique identifier for show
+- Assuming <Cancellation window in minutes> in show setup will be used to evaluate if the buyer is allowed to cancel
+- Since there is no requirement about setup duplicate show. Assuming a show can be setup only once, once setup, it cannot be changed.

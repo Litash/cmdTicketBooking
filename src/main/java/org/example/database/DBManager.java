@@ -1,6 +1,7 @@
 package org.example.database;
 
 import org.apache.commons.io.IOUtils;
+import org.example.model.Booking;
 import org.example.model.Show;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,6 +84,25 @@ public class DBManager {
             throw e;
         }
     }
+
+    public int saveBooking(Booking booking) throws SQLException {
+        PreparedStatement preparedStatement = null;
+        try {
+            preparedStatement = conn.prepareStatement(
+                    "insert into BOOKING values (?, ?, ?, ?, ?)"
+            );
+            preparedStatement.setString(1, booking.getTicketID());
+            preparedStatement.setInt(2, booking.getPhone());
+            preparedStatement.setString(3, booking.getShowNumber());
+            preparedStatement.setString(4, String.join(",", booking.getBookedSeats()));
+            preparedStatement.setTimestamp(5, booking.getBookingTime());
+            return preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            logger.error(e.getLocalizedMessage()); //todo: add logger
+            throw e;
+        }
+    }
+    
     public void close() {
         try {
             if (resultSet != null) {
