@@ -8,6 +8,7 @@ import org.example.exception.MyDBException;
 
 public class Main {
     public static void main(String[] args) {
+        System.out.println("Log file location: '" + System.getProperty("org.slf4j.simpleLogger.logFile") + "'");
         // db connection
         String jdbcUrl = "jdbc:h2:./showBooking";
         String username = "sa";
