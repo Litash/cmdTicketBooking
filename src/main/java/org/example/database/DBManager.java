@@ -1,6 +1,8 @@
 package org.example.database;
 
 import org.apache.commons.io.IOUtils;
+import org.example.exception.FileLoadException;
+import org.example.exception.MyDBException;
 import org.example.model.Booking;
 import org.example.model.Show;
 import org.slf4j.Logger;
@@ -9,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.*;
+import java.util.List;
 
 public class DBManager {
     private final String jdbcUrl;
@@ -19,6 +22,8 @@ public class DBManager {
     private Statement statement;
     private ResultSet resultSet;
 
+    private PreparedStatement preparedStatement;
+
     Logger logger = LoggerFactory.getLogger(DBManager.class);
     
     public DBManager(String jdbcUrl, String username, String password) {
@@ -27,7 +32,7 @@ public class DBManager {
         this.password = password;
     }
 
-    public void initDatabase() {
+    public void initDatabase() throws MyDBException, FileLoadException {
         
         try {
             conn = DriverManager.getConnection(jdbcUrl, username, password);
@@ -39,10 +44,11 @@ public class DBManager {
             statement.execute(sql);
             System.out.println("Database initialized.");
         } catch (SQLException e) {
-            logger.error("Cannot read schema.sql");
-            throw new RuntimeException(e);
+            logger.error("Cannot create db");
+            throw new MyDBException("Cannot create db", e);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            logger.error("Cannot read schema.sql");
+            throw new FileLoadException("Cannot read schema.sql", e);
         }
 
     }
@@ -61,14 +67,13 @@ public class DBManager {
             String availableSeats = resultSet.getString("AVAILABLE_SEATS");
             
             return new Show(showNum, rows, seatsPerRow, cancellationWindow, availableSeats);
-        } catch (Exception e) {
-            logger.error(e.getMessage());//todo: add logger
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
         }
         return null;
     }
 
-    public int saveShow(Show show) throws SQLException {
-        PreparedStatement preparedStatement = null;
+    public int saveShow(Show show) {
         try {
             preparedStatement = conn.prepareStatement(
                 "insert into SHOW values (?, ?, ?, ?, ?)"
@@ -80,13 +85,24 @@ public class DBManager {
             preparedStatement.setString(5, String.join(",", show.getAvailableSeats()));
             return preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            logger.error(e.getLocalizedMessage()); //todo: add logger
-            throw e;
+            logger.error(e.getLocalizedMessage());
+        }
+        return 0;
+    }
+
+    public void updateShow(Show show, List<String> availability) {
+        try {
+            preparedStatement = conn
+                    .prepareStatement("update SHOW set AVAILABLE_SEATS= ? where SHOW_NUMBER= ? ;");
+            preparedStatement.setString(1, String.join(",", availability));
+            preparedStatement.setString(2, show.getShowNumber());
+            preparedStatement.executeUpdate();
+        } catch (Exception e) {
+            logger.error(e.getMessage());
         }
     }
 
-    public int saveBooking(Booking booking) throws SQLException {
-        PreparedStatement preparedStatement = null;
+    public int saveBooking(Booking booking) throws MyDBException {
         try {
             preparedStatement = conn.prepareStatement(
                     "insert into BOOKING values (?, ?, ?, ?, ?)"
@@ -98,9 +114,9 @@ public class DBManager {
             preparedStatement.setTimestamp(5, booking.getBookingTime());
             return preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            logger.error(e.getLocalizedMessage()); //todo: add logger
-            throw e;
+            logger.error(e.getLocalizedMessage());
         }
+        return 0;
     }
     
     public void close() {
@@ -112,12 +128,16 @@ public class DBManager {
             if (statement != null) {
                 statement.close();
             }
+            
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
 
             if (conn != null) {
                 conn.close();
             }
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            logger.error(e.getMessage());
         }
     }
 }

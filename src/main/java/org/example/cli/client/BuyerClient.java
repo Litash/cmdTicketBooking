@@ -2,13 +2,12 @@ package org.example.cli.client;
 
 
 import org.example.database.DBManager;
+import org.example.exception.MyDBException;
 import org.example.model.Booking;
 import org.example.model.Show;
 
 import java.io.*;
-import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
@@ -21,12 +20,10 @@ import static org.example.cli.client.ClientUtils.checkParameters;
 
 public class BuyerClient implements Client{
     private static final List<String> AVAILABLE_COMMANDS = List.of("availability", "book", "cancel", "logout", "exit");
-    private BufferedReader in;
+    private final BufferedReader in;
     private final PrintStream out;
 
-    private DBManager dbManager;
-
-    private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private final DBManager dbManager;
 
     public BuyerClient(DBManager dbManager, InputStream in, PrintStream out) {
         this.in = new BufferedReader(new InputStreamReader(in));;
@@ -93,7 +90,7 @@ public class BuyerClient implements Client{
                 
                 return 200;
             }
-        } catch (SQLException e) {
+        } catch (MyDBException e) {
             out.println("Cannot book a ticket for the show "+ showNumber);
         }
         return 500;

@@ -2,6 +2,8 @@ package org.example.cli.client;
 
 import org.example.database.DBManager;
 import org.example.database.DBTestUtil;
+import org.example.exception.FileLoadException;
+import org.example.exception.MyDBException;
 import org.example.model.Show;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -14,7 +16,7 @@ class BuyerClientTest {
     static DBManager testDB;
 
     @BeforeAll
-    static void setUp() {
+    static void setUp() throws FileLoadException, MyDBException {
         testDB = new DBManager(DBTestUtil.testJdbcUrl, DBTestUtil.username, DBTestUtil.password);
         testDB.initDatabase();
     }

@@ -4,7 +4,6 @@ import org.example.database.DBManager;
 import org.example.model.Show;
 
 import java.io.*;
-import java.sql.SQLException;
 import java.util.List;
 
 import static org.example.cli.CommandLineApp.INPUT_LINE_PREFIX;
@@ -16,7 +15,7 @@ public class AdminClient implements Client {
     private final PrintStream out;
     private final DBManager dbManager;
 
-    private static List<String> AVAILABLE_COMMANDS = List.of("setup", "view", "logout", "exit");
+    private static final List<String> AVAILABLE_COMMANDS = List.of("setup", "view", "logout", "exit");
 
     public AdminClient(DBManager dbManager, InputStream in, PrintStream out) {
         this.in = new BufferedReader(new InputStreamReader(in));;
@@ -88,19 +87,14 @@ public class AdminClient implements Client {
         int seatsPerRow = Integer.parseInt(cmdArr[3]);
         int cancelWindow = Integer.parseInt(cmdArr[4]);
         Show newShow = new Show(showNumber, numOfRows, seatsPerRow, cancelWindow);
-        int result = 0;
-        try {
-            result = dbManager.saveShow(newShow);
-        } catch (SQLException e) {
-            out.println("\nA show with same number has already been setup"); //todo: update?
-            return 403;
-        }
+        int result = dbManager.saveShow(newShow);
 
         if (result == 1) {
             out.println("\nA new show has been setup successfully");
             return 200;
         } else {
-            return 500;
+            out.println("\nA show with same number has already been setup"); //todo: update?
+            return 403;
         }
     }
 }

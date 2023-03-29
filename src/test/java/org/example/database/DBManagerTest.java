@@ -1,5 +1,7 @@
 package org.example.database;
 
+import org.example.exception.FileLoadException;
+import org.example.exception.MyDBException;
 import org.example.model.Show;
 import org.junit.jupiter.api.*;
 
@@ -12,7 +14,7 @@ class DBManagerTest {
     static DBManager testDB;
     
     @BeforeAll
-    static void setUp() {
+    static void setUp() throws FileLoadException, MyDBException {
         testDB = new DBManager(DBTestUtil.testJdbcUrl, DBTestUtil.username, DBTestUtil.password);
         testDB.initDatabase();
     }
