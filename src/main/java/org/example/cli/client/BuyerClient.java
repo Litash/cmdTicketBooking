@@ -83,17 +83,22 @@ public class BuyerClient implements Client{
         Timestamp ts = Timestamp.from(Instant.now());
         Booking booking = new Booking(ticketID, phone, showNumber, seats, ts);
         try {
-            int result = dbManager.saveBooking(booking);
-            if (result == 1) {
+            int bookingResult = dbManager.saveBooking(booking);
+            int updateResult = updateShowAvailability(showNumber, seats);
+            if (bookingResult == 1 && updateResult == 1) { //todo: handle other possible results
                 out.println("A ticket has been booked for show "+ showNumber + ". Ticket number is " + ticketID);
-                //todo: update show availability
-                
                 return 200;
             }
         } catch (MyDBException e) {
             out.println("Cannot book a ticket for the show "+ showNumber);
         }
         return 500;
+    }
+
+    private int updateShowAvailability(String showNumber, List<String> bookedSeats) {
+        Show show = dbManager.getShow(showNumber);
+        show.getAvailableSeats().removeAll(bookedSeats);
+        return dbManager.updateShow(show, show.getAvailableSeats());
     }
 
     private int showAvailability(String showNumber) {

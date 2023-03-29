@@ -90,16 +90,17 @@ public class DBManager {
         return 0;
     }
 
-    public void updateShow(Show show, List<String> availability) {
+    public int updateShow(Show show, List<String> availability) {
         try {
             preparedStatement = conn
                     .prepareStatement("update SHOW set AVAILABLE_SEATS= ? where SHOW_NUMBER= ? ;");
             preparedStatement.setString(1, String.join(",", availability));
             preparedStatement.setString(2, show.getShowNumber());
-            preparedStatement.executeUpdate();
+            return preparedStatement.executeUpdate();
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
+        return 0;
     }
 
     public int saveBooking(Booking booking) throws MyDBException {

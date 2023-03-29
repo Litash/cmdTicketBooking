@@ -36,6 +36,7 @@ class BuyerClientTest {
     }
 
     @Test
+    @DisplayName("should book a ticket and update show availability")
     void book_happy_case() throws Exception {
         Show testShow = new Show("test2", 3, 3, 5);
         testDB.saveShow(testShow);
@@ -44,7 +45,9 @@ class BuyerClientTest {
                 .execute(() -> {
                     BuyerClient testClient = new BuyerClient(testDB, System.in, System.out);
                     int returnCode = testClient.run();
+                    Show updatedShow = testDB.getShow("test2");
                     assertThat(returnCode).isEqualTo(200);
+                    assertThat(updatedShow.getAvailableSeats()).hasSize(testShow.getAvailableSeats().size() - 3);
                 });
     }
 
