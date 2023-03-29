@@ -47,39 +47,20 @@ public class Show {
         return showNumber;
     }
 
-    public void setShowNumber(String showNumber) {
-        this.showNumber = showNumber;
-    }
-
     public int getNumberOfRows() {
         return numberOfRows;
-    }
-
-    public void setNumberOfRows(int numberOfRows) {
-        this.numberOfRows = numberOfRows;
     }
 
     public int getNumberOfSeatsPerRow() {
         return numberOfSeatsPerRow;
     }
 
-    public void setNumberOfSeatsPerRow(int numberOfSeatsPerRow) {
-        this.numberOfSeatsPerRow = numberOfSeatsPerRow;
-    }
-
     public int getCancellationWindowMins() {
         return cancellationWindowMins;
-    }
-
-    public void setCancellationWindowMins(int cancellationWindowMins) {
-        this.cancellationWindowMins = cancellationWindowMins;
     }
 
     public List<String> getAvailableSeats() {
         return availableSeats;
     }
 
-    public void setAvailableSeats(List<String> availableSeats) {
-        this.availableSeats = availableSeats;
-    }
 }

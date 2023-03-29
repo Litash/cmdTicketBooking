@@ -32,39 +32,20 @@ public class Booking {
         return ticketID;
     }
 
-    public void setTicketID(String ticketID) {
-        this.ticketID = ticketID;
-    }
-
     public Integer getPhone() {
         return phone;
-    }
-
-    public void setPhone(Integer phone) {
-        this.phone = phone;
     }
 
     public String getShowNumber() {
         return showNumber;
     }
 
-    public void setShowNumber(String showNumber) {
-        this.showNumber = showNumber;
-    }
-
     public List<String> getBookedSeats() {
         return bookedSeats;
-    }
-
-    public void setBookedSeats(List<String> bookedSeats) {
-        this.bookedSeats = bookedSeats;
     }
 
     public Timestamp getBookingTime() {
         return bookingTime;
     }
 
-    public void setBookingTime(Timestamp bookingTime) {
-        this.bookingTime = bookingTime;
-    }
 }
