@@ -111,7 +111,7 @@ public class AdminClient implements Client {
     }
 
     private void printShowDetails(Show show) {
-        out.println("Show Number = " + show.getShowNumber()
+        out.println("\nShow Number = " + show.getShowNumber()
                 + "\nNumber of Rows = " + show.getNumberOfRows()
                 + "\nNumber of seats per row = " + show.getNumberOfSeatsPerRow()
                 + "\nCancellation window in minutes = " + show.getCancellationWindowMins()
