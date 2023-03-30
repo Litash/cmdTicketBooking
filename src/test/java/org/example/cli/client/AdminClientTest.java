@@ -55,6 +55,28 @@ class AdminClientTest {
     }
 
     @Test
+    @DisplayName("should handle wrong parameter input type in setup")
+    void setup_sad_case_2() throws Exception {
+        withTextFromSystemIn("setup test02 a 3 5", "setup test02 3 a 5", "setup test02 3 3 a", "exit")
+                .execute(() -> {
+                    AdminClient testClient = new AdminClient(testDB, System.in, System.out);
+                    int returnCode = testClient.run();
+                    assertThat(returnCode).isEqualTo(400);
+                });
+    }
+
+    @Test
+    @DisplayName("should reject invalid seats configuration")
+    void setup_sad_case_3() throws Exception {
+        withTextFromSystemIn("setup test02 11 27 5", "exit")
+                .execute(() -> {
+                    AdminClient testClient = new AdminClient(testDB, System.in, System.out);
+                    int returnCode = testClient.run();
+                    assertThat(returnCode).isEqualTo(400);
+                });
+    }
+
+    @Test
     @DisplayName("should be able to view the show after setup")
     void view_happy_case() throws Exception {
         withTextFromSystemIn("setup test03 3 3 5", "view test02", "exit")

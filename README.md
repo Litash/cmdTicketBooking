@@ -38,6 +38,6 @@ The application shall cater to the below 2 types of users & their requirements â
 3. Only one booking per phone# is allowed per show.
 
 # Assumption
-- Assuming show number is unique identifier for show
+- Assuming show number is unique identifier for show, and the type of show number is string less than 20 characters
 - Assuming <Cancellation window in minutes> in show setup will be used to evaluate if the buyer is allowed to cancel
 - Since there is no requirement about setup duplicate show. Assuming a show can be setup only once, once setup, it cannot be changed.

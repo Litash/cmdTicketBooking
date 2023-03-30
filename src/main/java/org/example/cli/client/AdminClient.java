@@ -27,13 +27,8 @@ public class AdminClient implements Client {
     @Override
     public int run() throws IOException {
         int returnCode = 0;
-        out.print("\n\n====== You are an Admin. ======\n" +
-                "Available commands: \n" +
-                "Setup <Show Number> <Number of Rows> <Number of seats per row> <Cancellation window in minutes>\n" +
-                "View <Show Number>\n" +
-                "Logout\n" +
-                "Exit\n" + INPUT_LINE_PREFIX);
-        
+        printMenu();
+
         String cmd = in.readLine();
         while (!"exit".equalsIgnoreCase(cmd)) {
             String[] cmdArr = cmd.split(" ");
@@ -61,28 +56,23 @@ public class AdminClient implements Client {
         return returnCode;
     }
 
-    private int getShow(String showNumber) {
-        Show show = dbManager.getShow(showNumber);
-        if (show == null) {
-            out.println("Show not found.");
-            return 404;
-        } else {
-            out.println("Show Number = " + show.getShowNumber()
-                    + "\nNumber of Rows = " + show.getNumberOfRows()
-                    + "\nNumber of seats per row = " + show.getNumberOfSeatsPerRow()
-                    + "\nCancellation window in minutes = " + show.getCancellationWindowMins()
-                    + "\nAvailable seats = " + show.getAvailableSeats());
-            return 200;
-        }
-    }
-
     private int setupShow(String[] cmdArr) {
-        //todo: validation
         String showNumber = cmdArr[1];
-        int numOfRows = Integer.parseInt(cmdArr[2]);
-        int seatsPerRow = Integer.parseInt(cmdArr[3]);
-        int cancelWindow = Integer.parseInt(cmdArr[4]);
-        Show newShow = new Show(showNumber, numOfRows, seatsPerRow, cancelWindow);
+        Show newShow;
+        try {
+            int numOfRows = Integer.parseInt(cmdArr[2]);
+            int seatsPerRow = Integer.parseInt(cmdArr[3]);
+            if (!isSeatConfigValid(numOfRows, seatsPerRow)) {
+                out.println("Invalid seats configuration. Max seats per row is 10 and max rows are 26");
+                return 400;
+            }
+            int cancelWindow = Integer.parseInt(cmdArr[4]);
+            newShow = new Show(showNumber, numOfRows, seatsPerRow, cancelWindow);
+        } catch (NumberFormatException e) {
+            printWrongParamFormatMsg();
+            return 400;
+        }
+
         int result = dbManager.saveShow(newShow);
 
         if (result == 1) {
@@ -92,5 +82,46 @@ public class AdminClient implements Client {
             out.println("\nA show with same number has already been setup"); //todo: update?
             return 403;
         }
+    }
+
+    private int getShow(String showNumber) {
+        Show show = dbManager.getShow(showNumber);
+        if (show == null) {
+            out.println("Show not found.");
+            return 404;
+        } else {
+            printShowDetails(show);
+            return 200;
+        }
+    }
+
+    private void printMenu() {
+        out.print("\n\n====== You are an Admin. ======\n" +
+                "Available commands: \n" +
+                "Setup <Show Number> <Number of Rows> <Number of seats per row> <Cancellation window in minutes>\n" +
+                "View <Show Number>\n" +
+                "Logout\n" +
+                "Exit\n" + INPUT_LINE_PREFIX);
+    }
+
+    private void printShowDetails(Show show) {
+        out.println("Show Number = " + show.getShowNumber()
+                + "\nNumber of Rows = " + show.getNumberOfRows()
+                + "\nNumber of seats per row = " + show.getNumberOfSeatsPerRow()
+                + "\nCancellation window in minutes = " + show.getCancellationWindowMins()
+                + "\nAvailable seats = " + show.getAvailableSeats());
+    }
+
+    private void printWrongParamFormatMsg() {
+        out.println("Parameters has wrong format.");
+        out.println("Allowed formats: " +
+                "\n<Show Number> - String" +
+                "\n<Number of Rows> - Integer" +
+                "\n<Number of seats per row> - Integer" +
+                "\n<Cancellation window in minutes> - Integer");
+    }
+
+    private boolean isSeatConfigValid(int numOfRows, int seatsPerRow) {
+        return numOfRows<=26 && seatsPerRow<=10;
     }
 }
