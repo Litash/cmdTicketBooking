@@ -70,9 +70,63 @@ class BuyerClientTest {
     }
 
     @Test
+    @DisplayName("should handle existing phone and show pair")
+    void book_sad_case_1() throws Exception {
+        final String testShowNumber = "sadBooking1";
+        Show testShow = new Show(testShowNumber, 3, 3, 5);
+        testDB.saveShow(testShow);
+        
+
+        withTextFromSystemIn("book sadBooking1 12341234 A1,B2,C3", "book sadBooking1 12341234 A3,B2,C1", "exit")
+                .execute(() -> {
+                    BuyerClient testClient = new BuyerClient(testDB, System.in, System.out);
+                    int returnCode = testClient.run();
+                    Show updatedShow = testDB.getShow(testShowNumber);
+                    assertThat(returnCode).isEqualTo(418);
+                    assertThat(updatedShow.getAvailableSeats()).hasSize(testShow.getAvailableSeats().size() - 3);
+                });
+    }
+
+    @Test
+    @DisplayName("should handle invalid seats")
+    void book_sad_case_2() throws Exception {
+        final String testShowNumber = "sadBooking2";
+        Show testShow = new Show(testShowNumber, 3, 3, 5);
+        testDB.saveShow(testShow);
+
+
+        withTextFromSystemIn("book sadBooking2 12341234 A4,B0", "book sadBooking2 12341234 aa, bb", "book sadBooking2 12341234 a0,1b", "exit")
+                .execute(() -> {
+                    BuyerClient testClient = new BuyerClient(testDB, System.in, System.out);
+                    int returnCode = testClient.run();
+                    Show updatedShow = testDB.getShow(testShowNumber);
+                    assertThat(returnCode).isEqualTo(400);
+                    assertThat(updatedShow.getAvailableSeats()).hasSameElementsAs(testShow.getAvailableSeats());
+                });
+    }
+
+    @Test
+    @DisplayName("should handle invalid phone number in booking")
+    void book_sad_case_3() throws Exception {
+        final String testShowNumber = "sadBooking3";
+        Show testShow = new Show(testShowNumber, 3, 3, 5);
+        testDB.saveShow(testShow);
+
+
+        withTextFromSystemIn("book sadBooking3 +6512341234 A4,B0", "exit")
+                .execute(() -> {
+                    BuyerClient testClient = new BuyerClient(testDB, System.in, System.out);
+                    int returnCode = testClient.run();
+                    Show updatedShow = testDB.getShow(testShowNumber);
+                    assertThat(returnCode).isEqualTo(400);
+                    assertThat(updatedShow.getAvailableSeats()).hasSameElementsAs(testShow.getAvailableSeats());
+                });
+    }
+
+    @Test
     @DisplayName("should cancel show within cancellation window")
     void cancel_happy_case() throws Exception {
-        final String testShowNumber = "test3";
+        final String testShowNumber = "testCancelShow";
         Show testShow = new Show(testShowNumber, 3, 3, 5);
         testDB.saveShow(testShow);
         Instant oldTime = Instant.now().minus(1, ChronoUnit.MINUTES);
@@ -85,6 +139,50 @@ class BuyerClientTest {
                     int returnCode = testClient.run();
                     Show updatedShow = testDB.getShow(testShowNumber);
                     assertThat(returnCode).isEqualTo(200);
+                    assertThat(updatedShow.getAvailableSeats()).hasSameElementsAs(testShow.getAvailableSeats());
+                });
+    }
+
+    @Test
+    @DisplayName("should handle invalid phone number in cancellation")
+    void cancel_sad_case_1() throws Exception {
+        final String testShowNumber = "sadCancel1";
+        final String testTicket = "testTicket1";
+        Show testShow = new Show(testShowNumber, 3, 3, 5);
+        testDB.saveShow(testShow);
+        Instant oldTime = Instant.now().minus(1, ChronoUnit.MINUTES);
+        Booking booking = new Booking(testTicket, 12341234, testShowNumber, List.of("A1", "B2"), Timestamp.from(oldTime));
+        testDB.saveBooking(booking);
+
+
+        withTextFromSystemIn("cancel testTicket1 +6512341234", "exit")
+                .execute(() -> {
+                    BuyerClient testClient = new BuyerClient(testDB, System.in, System.out);
+                    int returnCode = testClient.run();
+                    Show updatedShow = testDB.getShow(testShowNumber);
+                    assertThat(returnCode).isEqualTo(400);
+                    assertThat(updatedShow.getAvailableSeats()).hasSameElementsAs(testShow.getAvailableSeats());
+                });
+    }
+
+    @Test
+    @DisplayName("should reject cancellation when cancellation widow has closed")
+    void cancel_sad_case_2() throws Exception {
+        final String testShowNumber = "sadCancel2";
+        final String testTicket = "testTicket2";
+        Show testShow = new Show(testShowNumber, 3, 3, 5);
+        testDB.saveShow(testShow);
+        Instant oldTime = Instant.now().minus(5, ChronoUnit.MINUTES);
+        Booking booking = new Booking(testTicket, 12341234, testShowNumber, List.of("A1", "B2"), Timestamp.from(oldTime));
+        testDB.saveBooking(booking);
+
+
+        withTextFromSystemIn("cancel testTicket2 12341234", "exit")
+                .execute(() -> {
+                    BuyerClient testClient = new BuyerClient(testDB, System.in, System.out);
+                    int returnCode = testClient.run();
+                    Show updatedShow = testDB.getShow(testShowNumber);
+                    assertThat(returnCode).isEqualTo(400);
                     assertThat(updatedShow.getAvailableSeats()).hasSameElementsAs(testShow.getAvailableSeats());
                 });
     }

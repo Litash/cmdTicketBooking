@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DBManager {
@@ -124,29 +125,7 @@ public class DBManager {
         return 0;
     }
     
-    public void close() {
-        try {
-            if (resultSet != null) {
-                resultSet.close();
-            }
-
-            if (statement != null) {
-                statement.close();
-            }
-            
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-
-            if (conn != null) {
-                conn.close();
-            }
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    public Booking getBookingByShowAndPhone(String ticketId) {
+    public Booking getBookingByTicketId(String ticketId) {
         try {
             resultSet = statement
                     .executeQuery("select * from BOOKING where TICKET_ID= '" + ticketId + "' LIMIT 1;");
@@ -162,6 +141,23 @@ public class DBManager {
         return null;
     }
 
+    public List<Booking> getBookingByShowAndPhone(String showNumber, int phone) {
+        List<Booking> result = new ArrayList<>();
+        try {
+            resultSet = statement
+                    .executeQuery("select * from BOOKING where SHOW_NO= '" + showNumber + "' and PHONE= " + phone + ";");
+            while (resultSet.next()) {
+                String ticketId = resultSet.getString("TICKET_ID");
+                String seats = resultSet.getString("BOOKED_SEATS");
+                Timestamp bookingTime = resultSet.getTimestamp("BOOKING_TIME");
+                result.add(new Booking(ticketId, phone, showNumber, seats, bookingTime));
+            }
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+        }
+        return result;
+    }
+
     public int deleteBooking(Booking booking) {
         String ticketID = booking.getTicketID();
         try {
@@ -173,5 +169,27 @@ public class DBManager {
             logger.error(e.getMessage());
         }
         return 0;
+    }
+
+    public void close() {
+        try {
+            if (resultSet != null) {
+                resultSet.close();
+            }
+
+            if (statement != null) {
+                statement.close();
+            }
+
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+
+            if (conn != null) {
+                conn.close();
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
     }
 }

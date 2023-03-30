@@ -69,7 +69,7 @@ public class AdminClient implements Client {
             int cancelWindow = Integer.parseInt(cmdArr[4]);
             newShow = new Show(showNumber, numOfRows, seatsPerRow, cancelWindow);
         } catch (NumberFormatException e) {
-            printWrongParamFormatMsg();
+            printWrongSetupParamFormatMsg();
             return 400;
         }
 
@@ -112,7 +112,7 @@ public class AdminClient implements Client {
                 + "\nAvailable seats = " + show.getAvailableSeats());
     }
 
-    private void printWrongParamFormatMsg() {
+    private void printWrongSetupParamFormatMsg() {
         out.println("Parameters has wrong format.");
         out.println("Allowed formats: " +
                 "\n<Show Number> - String" +
