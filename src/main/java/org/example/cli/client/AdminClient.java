@@ -70,7 +70,7 @@ public class AdminClient implements Client {
             int seatsPerRow = Integer.parseInt(cmdArr[3]);
             if (!isSeatConfigValid(numOfRows, seatsPerRow)) {
                 out.println("Invalid seats configuration. Max seats per row is 10 and max rows are 26");
-                return 400;
+                return 418;
             }
             int cancelWindow = Integer.parseInt(cmdArr[4]);
             newShow = new Show(showNumber, numOfRows, seatsPerRow, cancelWindow);

@@ -88,7 +88,9 @@ public class DBManager {
             preparedStatement.setInt(3, show.getNumberOfSeatsPerRow());
             preparedStatement.setInt(4, show.getCancellationWindowMins());
             preparedStatement.setString(5, String.join(",", show.getAvailableSeats()));
-            return preparedStatement.executeUpdate();
+            int result = preparedStatement.executeUpdate();
+            conn.commit();
+            return result;
         } catch (SQLException e) {
             logger.error(e.getLocalizedMessage());
         }
@@ -101,7 +103,9 @@ public class DBManager {
                     .prepareStatement("update SHOW set AVAILABLE_SEATS= ? where SHOW_NUMBER= ? ;");
             preparedStatement.setString(1, String.join(",", availability));
             preparedStatement.setString(2, show.getShowNumber());
-            return preparedStatement.executeUpdate();
+            int result = preparedStatement.executeUpdate();
+            conn.commit();
+            return result;
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
@@ -118,7 +122,9 @@ public class DBManager {
             preparedStatement.setString(3, booking.getShowNumber());
             preparedStatement.setString(4, String.join(",", booking.getBookedSeats()));
             preparedStatement.setTimestamp(5, booking.getBookingTime());
-            return preparedStatement.executeUpdate();
+            int result = preparedStatement.executeUpdate();
+            conn.commit();
+            return result;
         } catch (SQLException e) {
             logger.error(e.getLocalizedMessage());
         }
@@ -164,7 +170,7 @@ public class DBManager {
             preparedStatement = conn.prepareStatement("delete from BOOKING where TICKET_ID= ?;");
             preparedStatement.setString(1, ticketID);
             preparedStatement.executeUpdate();
-
+            conn.commit();
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }

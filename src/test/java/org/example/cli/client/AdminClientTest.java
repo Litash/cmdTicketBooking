@@ -33,6 +33,17 @@ class AdminClientTest {
     }
 
     @Test
+    @DisplayName("should accept max seats configuration")
+    void setup_happy_case_2() throws Exception {
+        withTextFromSystemIn("setup test001 26 10 5", "exit")
+                .execute(() -> {
+                    AdminClient testClient = new AdminClient(testDB, System.in, System.out);
+                    int returnCode = testClient.run();
+                    assertThat(returnCode).isEqualTo(200);
+                });
+    }
+
+    @Test
     @DisplayName("should handle command with missing parameters")
     void setup_sad_case() throws Exception {
         withTextFromSystemIn("setup test01 3 3", "exit")
@@ -64,22 +75,44 @@ class AdminClientTest {
                     assertThat(returnCode).isEqualTo(400);
                 });
     }
-
+    
     @Test
-    @DisplayName("should reject invalid seats configuration")
+    @DisplayName("should reject invalid seats configuration 27 10")
     void setup_sad_case_3() throws Exception {
-        withTextFromSystemIn("setup test02 11 27 5", "exit")
+        withTextFromSystemIn("setup test02 27 10 5", "exit")
                 .execute(() -> {
                     AdminClient testClient = new AdminClient(testDB, System.in, System.out);
                     int returnCode = testClient.run();
-                    assertThat(returnCode).isEqualTo(400);
+                    assertThat(returnCode).isEqualTo(418);
+                });
+    }
+
+    @Test
+    @DisplayName("should reject invalid seats configuration 26 11")
+    void setup_sad_case_4() throws Exception {
+        withTextFromSystemIn("setup test02 26 11 5", "exit")
+                .execute(() -> {
+                    AdminClient testClient = new AdminClient(testDB, System.in, System.out);
+                    int returnCode = testClient.run();
+                    assertThat(returnCode).isEqualTo(418);
+                });
+    }
+
+    @Test
+    @DisplayName("should reject invalid seats configuration 27 11")
+    void setup_sad_case_5() throws Exception {
+        withTextFromSystemIn("setup test02 27 11 5", "exit")
+                .execute(() -> {
+                    AdminClient testClient = new AdminClient(testDB, System.in, System.out);
+                    int returnCode = testClient.run();
+                    assertThat(returnCode).isEqualTo(418);
                 });
     }
 
     @Test
     @DisplayName("should be able to view the show after setup")
     void view_happy_case() throws Exception {
-        withTextFromSystemIn("setup test03 3 3 5", "view test02", "exit")
+        withTextFromSystemIn("setup test03 3 3 5", "view test03", "exit")
                 .execute(() -> {
                     AdminClient testClient = new AdminClient(testDB, System.in, System.out);
                     int returnCode = testClient.run();
