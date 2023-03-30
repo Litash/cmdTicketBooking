@@ -35,12 +35,7 @@ public class BuyerClient implements Client{
 
     @Override
     public int run() throws IOException {
-        out.print("\n\n====== Welcome! You are a buyer. ======\n" +
-                "Available commands: \n" +
-                "Availability <Show Number>\n" +
-                "Book <Show Number> <Phone#> <Comma separated list of seats>\n" +
-                "Cancel <Ticket#> <Phone#>\n" +
-                "Exit\n\n" + INPUT_LINE_PREFIX);
+        printMenu();
 
         int returnCode = 0;
         String cmd = in.readLine();
@@ -51,7 +46,7 @@ public class BuyerClient implements Client{
                 int paramStatus = checkParameters(cmdArr, 2, out);
                 if (paramStatus != 200) return paramStatus;
                 
-                returnCode = showAvailability(cmdArr[1]);
+                returnCode = printAvailability(cmdArr[1]);
             }
 
             if ("book".equalsIgnoreCase(cmdArr[0])) {
@@ -79,9 +74,40 @@ public class BuyerClient implements Client{
         return returnCode;
     }
 
+    private int printAvailability(String showNumber) {
+        Show show = dbManager.getShow(showNumber);
+        if (show == null) {
+            out.println("Cannot find show " + showNumber);
+            return 404;
+        }
+        out.println("Show number: " + show.getShowNumber());
+        out.println("Available seats: " + show.getAvailableSeats());
+        return 200;
+    }
+
+    private int bookShowTicket(String[] cmdArr) {
+        String showNumber = cmdArr[1];
+        Integer phone = Integer.parseInt(cmdArr[2]); //todo: validation
+        List<String> seats = Arrays.stream(cmdArr[3].split(",")).map(String::toUpperCase).collect(Collectors.toList());
+        String ticketID = UUID.randomUUID().toString();
+        Timestamp ts = Timestamp.from(Instant.now()); //todo: check
+        Booking booking = new Booking(ticketID, phone, showNumber, seats, ts);
+        try {
+            int bookingResult = dbManager.saveBooking(booking);
+            int updateResult = updateShowAvailability(showNumber, seats);
+            if (bookingResult == 1 && updateResult == 1) { //todo: handle other possible results
+                out.println("A ticket has been booked for show "+ showNumber + ". Ticket number is " + ticketID);
+                return 200;
+            }
+        } catch (MyDBException e) {
+            out.println("Cannot book a ticket for the show "+ showNumber);
+        }
+        return 500;
+    }
+
     private int cancelTicket(String[] cmdArr) {
         String ticketID = cmdArr[1];
-        int phone = Integer.valueOf(cmdArr[2]);
+        int phone = Integer.valueOf(cmdArr[2]); //todo: validation
         Booking booking = dbManager.getBookingByShowAndPhone(ticketID);
         Show show = dbManager.getShow(booking.getShowNumber());
         
@@ -99,39 +125,18 @@ public class BuyerClient implements Client{
         return 400;
     }
 
-    private int bookShowTicket(String[] cmdArr) {
-        String showNumber = cmdArr[1];
-        Integer phone = Integer.parseInt(cmdArr[2]); //todo: validation
-        List<String> seats = Arrays.stream(cmdArr[3].split(",")).map(String::toUpperCase).collect(Collectors.toList()); 
-        String ticketID = UUID.randomUUID().toString();
-        Timestamp ts = Timestamp.from(Instant.now()); //todo: check
-        Booking booking = new Booking(ticketID, phone, showNumber, seats, ts);
-        try {
-            int bookingResult = dbManager.saveBooking(booking);
-            int updateResult = updateShowAvailability(showNumber, seats);
-            if (bookingResult == 1 && updateResult == 1) { //todo: handle other possible results
-                out.println("A ticket has been booked for show "+ showNumber + ". Ticket number is " + ticketID);
-                return 200;
-            }
-        } catch (MyDBException e) {
-            out.println("Cannot book a ticket for the show "+ showNumber);
-        }
-        return 500;
-    }
-
     private int updateShowAvailability(String showNumber, List<String> bookedSeats) {
         Show show = dbManager.getShow(showNumber);
         show.getAvailableSeats().removeAll(bookedSeats);
         return dbManager.updateShow(show, show.getAvailableSeats());
     }
 
-    private int showAvailability(String showNumber) {
-        Show show = dbManager.getShow(showNumber);
-        if (show != null) {
-            out.println("Show number: " + show.getShowNumber());
-            out.println("Available seats: " + show.getAvailableSeats());
-            return 200;
-        }
-        return 404;
+    private void printMenu() {
+        out.print("\n\n====== Welcome! You are a buyer. ======\n" +
+                "Available commands: \n" +
+                "Availability <Show Number>\n" +
+                "Book <Show Number> <Phone#> <Comma separated list of seats>\n" +
+                "Cancel <Ticket#> <Phone#>\n" +
+                "Exit\n\n" + INPUT_LINE_PREFIX);
     }
 }

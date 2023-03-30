@@ -42,6 +42,17 @@ class BuyerClientTest {
     }
 
     @Test
+    @DisplayName("should handle show not found")
+    void availability_sad_case() throws Exception {
+        withTextFromSystemIn("availability voidShow", "exit")
+                .execute(() -> {
+                    BuyerClient testClient = new BuyerClient(testDB, System.in, System.out);
+                    int returnCode = testClient.run();
+                    assertThat(returnCode).isEqualTo(404);
+                });
+    }
+
+    @Test
     @DisplayName("should book a ticket and update show availability")
     void book_happy_case() throws Exception {
         final String testShowNumber = "test2";
