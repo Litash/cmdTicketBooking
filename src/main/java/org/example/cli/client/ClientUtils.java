@@ -10,7 +10,7 @@ class ClientUtils {
     }
     public static int checkParameters(String[] cmdArr, int numOfParams, PrintStream out) {
         if (cmdArr.length < numOfParams) {
-            out.println("Missing parameters, please try again.");
+            out.println("\nMissing parameters, please try again.");
             return 400;
         }
         return 200;
@@ -18,7 +18,7 @@ class ClientUtils {
 
     public static int checkAvailableCommands(int returnCode, String[] cmdArr, List<String> availableCmd, PrintStream out) {
         if (!availableCmd.contains(cmdArr[0].toLowerCase())) {
-            out.println("Command is not supported.");
+            out.println("\nCommand is not supported.");
             returnCode = 405;
         }
         return returnCode;

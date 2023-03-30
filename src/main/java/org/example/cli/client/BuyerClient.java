@@ -86,10 +86,10 @@ public class BuyerClient implements Client{
     private int printAvailability(String showNumber) {
         Show show = dbManager.getShow(showNumber);
         if (show == null) {
-            out.println("Cannot find show " + showNumber);
+            out.println("\nCannot find show " + showNumber);
             return 404;
         }
-        out.println("Show number: " + show.getShowNumber());
+        out.println("\nShow number: " + show.getShowNumber());
         out.println("Available seats: " + show.getAvailableSeats());
         return 200;
     }
@@ -106,14 +106,14 @@ public class BuyerClient implements Client{
 
         List<Booking> existingBooking = dbManager.getBookingByShowAndPhone(showNumber, phone);
         if (!existingBooking.isEmpty()) {
-            out.println("Phone number " + phone + " has already booked for show " + showNumber);
+            out.println("\nPhone number " + phone + " has already booked for show " + showNumber);
             return 418;
         }
 
         Show show = dbManager.getShow(showNumber);
         HashSet<String> availableSeats = new HashSet<>(show.getAvailableSeats());
         if (!availableSeats.containsAll(targetSeats)) {
-            out.println("Invalid seats selection. Available seats: " + show.getAvailableSeats());
+            out.println("\nInvalid seats selection. Available seats: " + show.getAvailableSeats());
             return 400;
         }
         
@@ -122,7 +122,7 @@ public class BuyerClient implements Client{
         Booking booking = new Booking(ticketID, phone, showNumber, targetSeats, currentTime);
         dbManager.saveBooking(booking);
         updateShowAvailability(showNumber, targetSeats);
-        out.println("A ticket has been booked for show "+ showNumber + ". Ticket number is " + ticketID);
+        out.println("\nA ticket has been booked for show "+ showNumber + ". Ticket number is " + ticketID);
         return 200;
     }
 
@@ -137,7 +137,7 @@ public class BuyerClient implements Client{
     }
 
     private void printWrongBookParamFormatMsg() {
-        out.println("Parameters has wrong format.");
+        out.println("\nParameters has wrong format.");
         out.println("Allowed formats: " +
                 "\n<Show Number> - String" +
                 "\n<Ticket#> - String" +
@@ -160,18 +160,19 @@ public class BuyerClient implements Client{
         Instant windowCloseTime = bookingInstant.plus(cancelWindow, ChronoUnit.MINUTES);
         if (windowCloseTime.isAfter(Instant.now())) {
             dbManager.deleteBooking(booking);
+            out.println("\nYour ticket has been cancelled for show " + show.getShowNumber() + ", ticket number: " + ticketID);
             return 200;
         } else {
-            out.println("Sorry, cancellation window for show "+ show.getShowNumber() +" has closed at " + Timestamp.from(windowCloseTime) +
+            out.println("\nSorry, cancellation window for show "+ show.getShowNumber() +" has closed at " + Timestamp.from(windowCloseTime) +
                     ", you cannot cancel your booking.");
         }
         return 400;
     }
 
-    private int updateShowAvailability(String showNumber, List<String> bookedSeats) {
+    private void updateShowAvailability(String showNumber, List<String> bookedSeats) {
         Show show = dbManager.getShow(showNumber);
         show.getAvailableSeats().removeAll(bookedSeats);
-        return dbManager.updateShow(show, show.getAvailableSeats());
+        dbManager.updateShow(show, show.getAvailableSeats());
     }
 
     private void printMenu() {
