@@ -45,8 +45,8 @@ The application shall cater to the below 2 types of users & their requirements â
 # How to use
 Assuming you are using Window.
 ## Prerequisite 
-Maven 3.8.1+
-JDK 14.0.2+
+Maven 3
+JDK 14
 
 ## Build 
 under project root directory, use cmd.exe and run:
@@ -55,7 +55,7 @@ mvn clean install
 mvn clean package
 ```
 ## Run
-under project root directory, run:
+under project root directory, use cmd.exe and run:
 ```
 run.bat
 ```
