@@ -16,8 +16,8 @@ class ClientUtils {
         return 200;
     }
 
-    public static int checkAvailableCommands(int returnCode, String[] cmdArr, List<String> availableCmds, PrintStream out) {
-        if (!availableCmds.contains(cmdArr[0].toLowerCase())) {
+    public static int checkAvailableCommands(int returnCode, String[] cmdArr, List<String> availableCmd, PrintStream out) {
+        if (!availableCmd.contains(cmdArr[0].toLowerCase())) {
             out.println("Command is not supported.");
             returnCode = 405;
         }

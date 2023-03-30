@@ -8,8 +8,7 @@ import java.util.List;
 
 public class CommandLineApp {
 
-    private static final String HELP_TEXT_RESOURCE = "/help.txt";
-    private String[] args;
+    private final String[] args;
     private final InputStream in;
     private final PrintStream out;
     private final PrintStream err;
@@ -68,7 +67,6 @@ public class CommandLineApp {
 
     private int showErrorAndExit(String errorMessage) {
         err.println("There is an error: " + errorMessage);
-        err.println("Refer to help page using '--help'"); //todo: add help option
         return 1;
     }
 }
