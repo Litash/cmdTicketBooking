@@ -43,7 +43,7 @@ The application shall cater to the below 2 types of users & their requirements â
 - Since there is no requirement about setup duplicate show. Assuming a show can be setup only once, once setup, it cannot be changed.
 
 # How to use
-Assuming you are using Window.
+Assuming you are using Windows.
 ## Prerequisite 
 Maven 3
 JDK 14
