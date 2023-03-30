@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Booking {
-    private String ticketID;
-    private Integer phone;
-    private String showNumber;
-    private List<String> bookedSeats;
-    private Timestamp bookingTime;
+    private final String ticketID;
+    private final Integer phone;
+    private final String showNumber;
+    private final List<String> bookedSeats;
+    private final Timestamp bookingTime;
 
     public Booking(String ticketID, Integer phone, String showNumber, List<String> bookedSeats, Timestamp bookingTime) {
         this.ticketID = ticketID;

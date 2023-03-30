@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Show {
-    private String showNumber;
-    private int numberOfRows;
-    private int numberOfSeatsPerRow;
-    private int cancellationWindowMins;
-    private List<String> availableSeats;
+    private final String showNumber;
+    private final int numberOfRows;
+    private final int numberOfSeatsPerRow;
+    private final int cancellationWindowMins;
+    private final List<String> availableSeats;
 
     public Show(String showNumber, int numberOfRows, int numberOfSeatsPerRow, int cancellationWindowMins) {
         this.showNumber = showNumber;
