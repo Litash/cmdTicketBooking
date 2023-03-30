@@ -16,7 +16,7 @@ The application shall cater to the below 2 types of users & their requirements â
 
 (To display Show Number, Ticket#, Buyer Phone#, Seat Numbers allocated to the buyerClient)
 
-**Buyer** â€“ The users should be able retrieve list of available seats for a show, select 1 or more seats , buy and cancel tickets.
+**Buyer** â€“ The users should be able to retrieve list of available seats for a show, select 1 or more seats , buy and cancel tickets.
 **Commands to be implemented for Buyer :**
 
 `Availability  <Show Number>`   
@@ -38,9 +38,12 @@ The application shall cater to the below 2 types of users & their requirements â
 3. Only one booking per phone# is allowed per show.
 
 ## Assumption
-- Assuming show number is unique identifier for show, and the type of show number is string less than 20 characters
-- Assuming <Cancellation window in minutes> in show setup will be used to evaluate if the buyer is allowed to cancel
+- Show number is unique identifier for show, and the type of show number is string less than 20 characters
+- "<Cancellation window in minutes>" in show setup will be used to evaluate if the buyer is allowed to cancel
 - Since there is no requirement about setup duplicate show. Assuming a show can be setup only once, once setup, it cannot be changed.
+- No authentication is required process for admin role user. The program allows the user to switch between Admin and Buyer roles freely for demo purpose.
+- Only one buyer will book a show at any time.
+- A show can only be setup once, after initial setup, it cannot be changed. If an Admin user try to setup a show for the second time, an error will be shown. 
 
 # How to use
 Assuming you are using Windows.

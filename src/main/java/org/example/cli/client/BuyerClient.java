@@ -2,7 +2,6 @@ package org.example.cli.client;
 
 
 import org.example.database.DBManager;
-import org.example.exception.MyDBException;
 import org.example.model.Booking;
 import org.example.model.Show;
 
@@ -29,7 +28,7 @@ public class BuyerClient implements Client{
     private final DBManager dbManager;
 
     public BuyerClient(DBManager dbManager, InputStream in, PrintStream out) {
-        this.in = new BufferedReader(new InputStreamReader(in));;
+        this.in = new BufferedReader(new InputStreamReader(in));
         this.out = new PrintStream(out);
         this.dbManager = dbManager;
     }
@@ -45,28 +44,37 @@ public class BuyerClient implements Client{
 
             if ("availability".equalsIgnoreCase(cmdArr[0])) {
                 int paramStatus = checkParameters(cmdArr, 2, out);
-                if (paramStatus != 200) return paramStatus;
-                
-                returnCode = printAvailability(cmdArr[1]);
+                if (paramStatus != 200) {
+                    returnCode = 400;
+                } else {
+                    returnCode = printAvailability(cmdArr[1]);
+                }
             }
 
             if ("book".equalsIgnoreCase(cmdArr[0])) {
                 int paramStatus = checkParameters(cmdArr, 4, out);
-                if (paramStatus != 200) return paramStatus;
+                if (paramStatus != 200) {
+                    returnCode = 400;
+                } else {
+                    returnCode = bookShowTicket(cmdArr);
+                }
 
-                returnCode = bookShowTicket(cmdArr);
             }
 
             if ("cancel".equalsIgnoreCase(cmdArr[0])) {
                 int paramStatus = checkParameters(cmdArr, 3, out);
-                if (paramStatus != 200) return paramStatus;
+                if (paramStatus != 200) {
+                    returnCode = 400;
+                } else {
+                    returnCode = cancelTicket(cmdArr);
+                }
 
-                returnCode = cancelTicket(cmdArr);
             }
 
             if ("logout".equalsIgnoreCase(cmdArr[0])) {
                 return 321;
             }
+            
             returnCode = checkAvailableCommands(returnCode, cmdArr, AVAILABLE_COMMANDS, out);
             out.print(INPUT_LINE_PREFIX);
             cmd = in.readLine();
@@ -112,17 +120,10 @@ public class BuyerClient implements Client{
         String ticketID = UUID.randomUUID().toString();
         Timestamp currentTime = Timestamp.from(Instant.now());
         Booking booking = new Booking(ticketID, phone, showNumber, targetSeats, currentTime);
-        try {
-            int bookingResult = dbManager.saveBooking(booking);
-            int updateResult = updateShowAvailability(showNumber, targetSeats);
-            if (bookingResult == 1 && updateResult == 1) { //todo: handle other possible results
-                out.println("A ticket has been booked for show "+ showNumber + ". Ticket number is " + ticketID);
-                return 200;
-            }
-        } catch (MyDBException e) {
-            out.println("Cannot book a ticket for the show "+ showNumber);
-        }
-        return 500;
+        dbManager.saveBooking(booking);
+        updateShowAvailability(showNumber, targetSeats);
+        out.println("A ticket has been booked for show "+ showNumber + ". Ticket number is " + ticketID);
+        return 200;
     }
 
     private Integer parsePhone(String phoneParam) {

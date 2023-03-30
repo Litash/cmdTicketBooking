@@ -102,13 +102,13 @@ public class DBManager {
             preparedStatement.setString(1, String.join(",", availability));
             preparedStatement.setString(2, show.getShowNumber());
             return preparedStatement.executeUpdate();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             logger.error(e.getMessage());
         }
         return 0;
     }
 
-    public int saveBooking(Booking booking) throws MyDBException {
+    public int saveBooking(Booking booking) {
         try {
             preparedStatement = conn.prepareStatement(
                     "insert into BOOKING values (?, ?, ?, ?, ?)"

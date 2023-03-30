@@ -19,7 +19,7 @@ public class AdminClient implements Client {
     private static final List<String> AVAILABLE_COMMANDS = List.of("setup", "view", "logout", "exit");
 
     public AdminClient(DBManager dbManager, InputStream in, PrintStream out) {
-        this.in = new BufferedReader(new InputStreamReader(in));;
+        this.in = new BufferedReader(new InputStreamReader(in));
         this.out = out;
         this.dbManager = dbManager;
     }
@@ -34,15 +34,21 @@ public class AdminClient implements Client {
             String[] cmdArr = cmd.split(" ");
             if ("setup".equalsIgnoreCase(cmdArr[0])) {
                 int paramStatus = checkParameters(cmdArr, 5, out);
-                if (paramStatus != 200) return paramStatus;
-                returnCode = setupShow(cmdArr);
+                if (paramStatus != 200) {
+                    returnCode = 400;
+                } else {
+                    returnCode = setupShow(cmdArr);
+                } 
             }
 
             if ("view".equalsIgnoreCase(cmdArr[0])) {
                 int paramStatus = checkParameters(cmdArr, 2, out);
-                if (paramStatus != 200) return paramStatus;
+                if (paramStatus != 200) {
+                    returnCode = 400;
+                } else {
+                    returnCode = getShow(cmdArr[1]);
+                }
                 
-                returnCode = getShow(cmdArr[1]);
             }
 
             if ("logout".equalsIgnoreCase(cmdArr[0])) {
@@ -79,7 +85,7 @@ public class AdminClient implements Client {
             out.println("\nA new show has been setup successfully");
             return 200;
         } else {
-            out.println("\nA show with same number has already been setup"); //todo: update?
+            out.println("\nA show with same number has already been setup."); 
             return 403;
         }
     }

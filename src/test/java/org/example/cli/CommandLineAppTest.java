@@ -91,17 +91,41 @@ class CommandLineAppTest {
     }
 
     @Test
+    @DisplayName("should start with admin role with unusual input")
+    void start_happy_case_5() throws Exception {
+        String[] args = new String[]{"aDmIn"};
+        mockAdminClient();
+
+        CommandLineApp testApp = new CommandLineApp(args, mockClientFactory, System.in, System.out, System.err);
+        int result = testApp.start();
+        assertThat(result).isZero();
+    }
+
+    @Test
+    @DisplayName("should start with buyer role with unusual input")
+    void start_happy_case_6() throws Exception {
+        String[] args = new String[]{"bUyEr"};
+        mockBuyerClient();
+
+        CommandLineApp testApp = new CommandLineApp(args, mockClientFactory, System.in, System.out, System.err);
+        int result = testApp.start();
+        assertThat(result).isZero();
+    }
+
+    @Test
     @DisplayName("should return code 1 when exception happened")
-    public void start_sad_case_1() throws Exception {
+    void start_sad_case_1() throws Exception {
         String[] args = new String[]{BUYER_ROLE};
-        when(mockClientFactory.getClient(any(), any(), any())).thenThrow(new RuntimeException("error message"));
+        when(mockBuyerClient.run()).thenThrow(new IOException("test error message"));
+        when(mockClientFactory.getClient(eq(BUYER_ROLE), any(), any())).thenReturn(mockBuyerClient);
         String text = tapSystemErrAndOutNormalized(() -> {
             CommandLineApp testApp = new CommandLineApp(args, mockClientFactory, System.in, System.out, System.err);
             int result = testApp.start();
             assertThat(result).isOne();
         });
-        assertThat(text).isEqualTo("There is an error: error message\nRefer to help page using '--help'\n");
+        assertThat(text).isEqualTo("There is an error: test error message\n");
     }
+    
 
     private void mockAdminClient() throws IOException {
         when(mockAdminClient.run()).thenReturn(0);

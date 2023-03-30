@@ -33,8 +33,8 @@ public class CommandLineApp {
             if ("exit".equalsIgnoreCase(role)) {
                 return 0;
             }
-            return runAsRole(role, in); // todo: handle returnCode
-        } catch (Exception e) {  //TODO: catch only the exactly expected types
+            return runAsRole(role, in);
+        } catch (IOException e) {  
             return showErrorAndExit(e.getMessage());
         }
     }
@@ -47,8 +47,8 @@ public class CommandLineApp {
     private static String getRole(String[] args, InputStream in, PrintStream out) throws IOException {
         String role;
         BufferedReader inputReader = new BufferedReader(new InputStreamReader(in));
-        if (args.length > 0 && ALLOWED_OPTS.contains(args[0])){
-            role = args[0];
+        if (args.length > 0 && ALLOWED_OPTS.contains(args[0].toLowerCase())){
+            role = args[0].toLowerCase();
         }else{
             role = promptRoleSelection(out, inputReader);
             while ( !ALLOWED_OPTS.contains(role)) {
@@ -61,7 +61,7 @@ public class CommandLineApp {
     private static String promptRoleSelection(PrintStream out, BufferedReader inputReader) throws IOException {
         String role;
         out.print("\nSelect your role: \nAdmin\nBuyer\n----- Enter 'exit' to close this app -----\n" + INPUT_LINE_PREFIX);
-        role = inputReader.readLine();
+        role = inputReader.readLine().toLowerCase();
         return role;
     }
 
