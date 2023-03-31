@@ -39,7 +39,7 @@ The application shall cater to the below 2 types of users & their requirements â
 
 ## Assumption
 - Show number is unique identifier for show, and the type of show number is string less than 20 characters (not only numbers)
-- "<Cancellation window in minutes>" in show setup will be used to evaluate if the buyer is allowed to cancel
+- "Cancellation window in minutes" in show setup will be used to evaluate if the buyer is allowed to cancel
 - Since there is no requirement about setup duplicate show. Assuming a show can be setup only once, once setup, it cannot be changed.
 - A show can only be setup once, after initial setup, it cannot be changed. If an Admin user try to setup a show for the second time, an error will be shown.
 - No authentication is required process for admin role user. The program allows the user to switch between Admin and Buyer roles freely (using logout command) for demo purpose.
@@ -48,8 +48,8 @@ The application shall cater to the below 2 types of users & their requirements â
 # How to use
 Assuming you are using Windows.
 ## Prerequisite 
-Maven 3
-JDK 14
+- Maven 3
+- JDK 14
 
 ## Build 
 under project root directory, use cmd.exe and run:
